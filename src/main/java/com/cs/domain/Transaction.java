@@ -14,8 +14,18 @@ public class Transaction {
     public Transaction() {
     }
 
+//    @VisibleForTesting
+
     public Transaction(int id, int orderId, Operation operation, double price, int quantity, DateTime txnTimeStamp) {
         this.id = id;
+        this.orderId = orderId;
+        this.operation = operation;
+        this.price = price;
+        this.quantity = quantity;
+        this.txnTimeStamp = txnTimeStamp;
+    }
+
+    public Transaction(int orderId, Operation operation, double price, int quantity, DateTime txnTimeStamp) {
         this.orderId = orderId;
         this.operation = operation;
         this.price = price;
