@@ -54,7 +54,7 @@ public class Transaction {
         return txnTimeStam;
     }
 
-    public void setTxnTimeStam(DateTime txnTimeStam) {
+    public void setTxnTimeStamp(DateTime txnTimeStam) {
         this.txnTimeStam = txnTimeStam;
     }
 

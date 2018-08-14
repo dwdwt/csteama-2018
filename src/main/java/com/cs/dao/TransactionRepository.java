@@ -2,12 +2,10 @@ package com.cs.dao;
 
 import com.cs.ta.domain.Operation;
 import com.cs.ta.domain.Transaction;
-import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -36,7 +34,7 @@ public class TransactionRepository {
             txn.setOperation(Operation.valueOf(rs.getString("operation")));
             txn.setQuantity(rs.getInt("quantity"));
             DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-            txn.setTxnTimeStam(formatter.parseDateTime(rs.getString("txnTimeStamp")));
+            txn.setTxnTimeStamp(formatter.parseDateTime(rs.getString("txnTimeStamp")));
 
             return txn;
         }

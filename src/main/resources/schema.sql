@@ -13,7 +13,7 @@ create table users(
 drop table orders if exists;
 
 create table orders(
-	orderId int(11) NOT NULL AUTO_INCREMENT,
+	id int(11) NOT NULL AUTO_INCREMENT,
 	userId int NOT NULL,
 	tickerSymbol varchar(10),
 	side varchar(10),
@@ -22,7 +22,7 @@ create table orders(
 	noOfShares int,
 	status varchar(20),
 	orderTimeStamp varchar(50),
-	PRIMARY KEY(orderId)
+	PRIMARY KEY(id)
 );
 
 drop table sectors if exists;
