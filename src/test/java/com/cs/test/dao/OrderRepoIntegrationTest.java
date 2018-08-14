@@ -31,10 +31,10 @@ public class OrderRepoIntegrationTest {
 
     @Autowired
     OrderRepository orderRepository;
+ 
     
     
-    
-    
+    //Story 4 Tests
     @Test
     public void canFindAllOrders() {
     	assertThat(orderRepository.findAllOrders().size(), is(8));
