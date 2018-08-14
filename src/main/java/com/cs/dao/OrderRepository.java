@@ -29,7 +29,7 @@ public class OrderRepository {
     private CompanyRepository companyRepo;
 
     public List<Order> findAllOrders(){
-        return jdbcTemplate.query("SELECT * from ORDERS GROUP BY side, type, status", new OrderRowMapper());
+        return jdbcTemplate.query("SELECT * from ORDERS GROUP BY side, orderType, status", new OrderRowMapper());
     }
     
     public List<Order> filterOrdersByCriteria(Map<String, String> criteriaMap){
@@ -57,7 +57,7 @@ public class OrderRepository {
         public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
             Order order = new Order();
             order.setOrderId(rs.getInt("id"));
-            order.setTrader(userRepo.findUserById(rs.getInt("userId")));
+            order.setTrader(userRepo.findUserById(rs.getInt("id")));
             order.setCompany(companyRepo.findCompanyByTickerSymbol(rs.getString("tickerSymbol")));
             order.setSide(rs.getString("side"));
             order.setType(rs.getString("orderType"));
