@@ -73,6 +73,11 @@ public class OrderRepository {
     		// Remove the last AND
     		query = query.substring(0, query.length()-5);
 		}
+<<<<<<< HEAD
+		
+    	
+=======
+>>>>>>> 668d014d1dbb634f221803c405e97d0a5070538e
     	 
     	if (!sortParams.isEmpty()) {
     		query += " ORDER BY " + sortParams + " " + sortSequence;
