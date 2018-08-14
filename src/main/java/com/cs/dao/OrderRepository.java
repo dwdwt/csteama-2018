@@ -30,12 +30,16 @@ public class OrderRepository {
     private CompanyRepository companyRepo;
 
     public List<Order> findAllOrders(){
-        return jdbcTemplate.query("SELECT * from ORDERS GROUP BY side, orderType, status", new OrderRowMapper());
+        return jdbcTemplate.query("SELECT * FROM orders", new OrderRowMapper());
+    }
+    
+    public Order findOrderById(int id) {
+    	return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?", new OrderRowMapper(), id);
     }
     
     public List<Order> filterAndSortOrdersByCriteria(Map<String, String> criteriaMap, String sortParams, String sortSequence){
 
-		String query = "SELECT * from ORDERS";
+		String query = "SELECT * FROM orders";
 		
 		if (!criteriaMap.isEmpty()) {
 			query += " WHERE ";
@@ -69,8 +73,6 @@ public class OrderRepository {
     		// Remove the last AND
     		query = query.substring(0, query.length()-5);
 		}
-		
-    	query += " GROUP BY side, orderType, status";
     	 
     	if (!sortParams.isEmpty()) {
     		query += " ORDER BY " + sortParams + " " + sortSequence;
@@ -79,13 +81,18 @@ public class OrderRepository {
 		return jdbcTemplate.query(query, new OrderRowMapper());
     	
     }
-     
+    
+    public void cancelOrder(int id) {
+    	jdbcTemplate.update("UPDATE orders SET status = 'CANCELLED' where id = ?", id);
+    }
+
+//    public boolean placeNewOrder(Order order)
     class OrderRowMapper implements RowMapper<Order> {
         @Override
         public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
             Order order = new Order();
             order.setOrderId(rs.getInt("id"));
-            order.setTrader(userRepo.findUserById(rs.getInt("id")));
+            order.setTrader(userRepo.findUserById(rs.getInt("userid")));
             order.setCompany(companyRepo.findCompanyByTickerSymbol(rs.getString("tickerSymbol")));
             order.setSide(rs.getString("side"));
             order.setType(rs.getString("orderType"));

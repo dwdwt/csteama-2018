@@ -19,7 +19,15 @@ public class OrderService {
         return orderRepo.findAllOrders();
     }
 	
+	public Order findOrderById(int id){
+        return orderRepo.findOrderById(id);
+    }
+	
 	public List<Order> filterAndSortOrdersByCriteria(Map<String, String> criteriaMap, String sortParams, String sortSequence){
 		return orderRepo.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
+	}
+	
+	public void cancelOrder(int id) {
+		orderRepo.cancelOrder(id);
 	}
 }
