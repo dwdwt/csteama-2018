@@ -9,6 +9,19 @@ public class Transaction {
     private Operation operation;
     private double price;
     private int quantity;
+    private DateTime txnTimeStamp;
+
+    public Transaction() {
+    }
+
+    public Transaction(int id, int orderId, Operation operation, double price, int quantity, DateTime txnTimeStamp) {
+        this.id = id;
+        this.orderId = orderId;
+        this.operation = operation;
+        this.price = price;
+        this.quantity = quantity;
+        this.txnTimeStamp = txnTimeStamp;
+    }
 
     public int getId() {
         return id;
@@ -50,15 +63,15 @@ public class Transaction {
         this.quantity = quantity;
     }
 
-    public DateTime getTxnTimeStam() {
-        return txnTimeStam;
+    public DateTime getTxnTimeStamp() {
+        return txnTimeStamp;
     }
 
     public void setTxnTimeStamp(DateTime txnTimeStam) {
-        this.txnTimeStam = txnTimeStam;
+        this.txnTimeStamp = txnTimeStam;
     }
 
-    private DateTime txnTimeStam;
+
 
 
 }

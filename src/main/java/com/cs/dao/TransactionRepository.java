@@ -24,6 +24,20 @@ public class TransactionRepository {
         return jdbcTemplate.query("select * from transactions", new TransactionRowMapper());
     }
 
+    public Transaction findById(int id) {
+        return jdbcTemplate.queryForObject("select * from transactions where id =?", new TransactionRowMapper(), id);
+    }
+
+    //@TODO: UNFINISHED
+    public void insertTxn(Transaction txn) {
+//        "INSERT INTO transactions()"
+////        return jdbcTemplate.create
+    }
+
+    public void update(String sql){
+        jdbcTemplate.update(sql);
+    }
+
     class TransactionRowMapper implements RowMapper<Transaction> {
         @Override
         public Transaction mapRow(ResultSet rs, int rowNum) throws SQLException {
