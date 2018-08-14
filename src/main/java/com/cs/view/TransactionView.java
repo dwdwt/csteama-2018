@@ -21,7 +21,7 @@ public class TransactionView {
         this.userId = order.getTrader().getUserId();
         this.operation = txn.getOperation().toString();
         this.timeStamp = txn.getTxnTimeStamp().toString();
-        this.timeStamp = order.getCompany().getName();
+        this.stockSymbol = order.getCompany().getTickerSymbol();
         this.quantity = txn.getQuantity();
         this.askPrice = txn.getPrice();
         this.typeOfOrder = order.getType();

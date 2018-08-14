@@ -45,7 +45,17 @@ public class TransactionService {
 
 	public List<TransactionView> getAllTransactionViews() {
 		List<TransactionView> transactionViewsList = new ArrayList<TransactionView>();
-		getAllTransactions().stream().forEach(it -> transactionViewsList.add(new TransactionView(it,orderRepository.findOrderById(it.getOrderId()))));
+		List<Transaction> transactionsList = getAllTransactions();
+
+		transactionsList.stream().forEach(it -> transactionViewsList.add(new TransactionView(it,orderRepository.findOrderById(it.getOrderId()))));
+		return transactionViewsList;
+	}
+
+	public List<TransactionView> getAllTransactionViewsByCriteria(String userId, String stockSymbol, String fromDate, String toDate) {
+		List<TransactionView> transactionViewsList = new ArrayList<TransactionView>();
+		transactionRepository.findTransactionByCriteria(userId,stockSymbol,fromDate,toDate)
+				.stream()
+				.forEach(it -> transactionViewsList.add(new TransactionView(it,orderRepository.findOrderById(it.getOrderId()))));
 		return transactionViewsList;
 	}
 }

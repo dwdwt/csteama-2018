@@ -37,13 +37,18 @@ public class TransactionRepository {
                 txn.getPrice(),
                 txn.getQuantity(),
                 "'" + txn.getTxnTimeStamp() + "'");
-
         update(sql);
     }
 
     public void removeTxn(int id) {
         String sql = MessageFormat.format("DELETE from transactions where id = {0}", id);
         update(sql);
+    }
+
+    public List<Transaction> findTransactionByCriteria(String userid, String stockSymbol, String fromDate, String toDate){
+        QueryBuilder queryBuilder = new QueryBuilder();
+        String query = queryBuilder.createCriteria().setUserId(userid).setSymbol(stockSymbol).setFrom(fromDate).setTo(toDate).toString();
+        return jdbcTemplate.query(query, new TransactionRowMapper());
     }
 
 
@@ -64,6 +69,43 @@ public class TransactionRepository {
             txn.setTxnTimeStamp(formatter.parseDateTime(rs.getString("txnTimeStamp")));
 
             return txn;
+        }
+    }
+
+    static class QueryBuilder {
+
+        String query = "";
+        public QueryBuilder createCriteria(){
+            query += "select * from transactions t join orders o on t.orderid = o.id where 1=1 ";
+            return this;
+
+        }
+
+        public QueryBuilder setUserId(String userId){
+            if (userId != null)   query += " and o.userId = " + userId;
+            return this;
+        }
+
+        public QueryBuilder setSymbol(String symbol){
+            if (symbol != null) query += " and o.tickerSymbol = '" + symbol + "'";
+            return this;
+
+        }
+
+        public QueryBuilder setFrom(String fromDate){
+            if (fromDate != null) query += " and t.txnTimeStamp >= '" + fromDate + "'";
+            return this;
+
+        }
+
+        public QueryBuilder setTo(String toDate){
+            if (toDate != null) query += " and t.txnTimeStamp <= '" + toDate + "'";
+            return this;
+        }
+
+        public String toString(){
+            return query;
+
         }
     }
 }

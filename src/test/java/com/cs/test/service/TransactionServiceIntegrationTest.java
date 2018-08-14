@@ -34,9 +34,11 @@ public class TransactionServiceIntegrationTest {
         DateTime someDateTime = formatter.parseDateTime("2008-11-11 13:23:44");
         Order someOrder = mock(Order.class);
         when(someOrder.getOrderId()).thenReturn(100);
+
         transactionService.addTxnRecord(someOrder,Operation.OPEN,10.1,2,someDateTime);
+
         List<Integer> orderIdList = new ArrayList<Integer>();
-                transactionService.getAllTransactions().forEach(it -> orderIdList.add(it.getOrderId()));
+        transactionService.getAllTransactions().forEach(it -> orderIdList.add(it.getOrderId()));
         assertThat(orderIdList, hasItem(100));
     }
 

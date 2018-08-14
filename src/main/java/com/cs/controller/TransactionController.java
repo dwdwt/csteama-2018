@@ -19,10 +19,14 @@ public class TransactionController {
 	@Autowired
 	TransactionService transactionService;
 
-	
 	@RequestMapping("/transactions")
-	public List<TransactionView> findAllTransactionsView(){
-		return transactionService.getAllTransactionViews();
+	public List<TransactionView> findOrdersWithFilterAndSortingCriteria(
+			@RequestParam(value="userId",required=false)String userId,
+			@RequestParam(value="stockSymbol",required=false)String stockSymbol,
+			@RequestParam(value="fromDate",required=false)String fromDate,
+			@RequestParam(value="toDate",required=false)String toDate) {
+		return transactionService.getAllTransactionViewsByCriteria(userId,stockSymbol,fromDate,toDate);
+
 	}
 	
 }
