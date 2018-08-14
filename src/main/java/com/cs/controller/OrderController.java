@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,9 +51,16 @@ public class OrderController {
 		return orderSvc.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
 	}
 	
-//	@RequestMapping(value="/users/{userId}")
-//	public User getUserById(@PathVariable("userId") int id) {
-//		return userSvc.findUserById(id);
-//	}
+	@RequestMapping("/cancel/{orderId}")
+	public List<Order> cancelOrder(@PathVariable("orderId")int orderId) {
+		Order order = orderSvc.findOrderById(orderId);
+		
+		//TO-DO: CUSTOM EXCEPTION FOR INVALID ORDER ID AND FILLED ORDERS
+		if(order != null && !order.getStatus().equals("FILLED")) {
+			orderSvc.cancelOrder(orderId);
+		}
+		
+		return orderSvc.findAllOrders();
+	}
 	
 }
