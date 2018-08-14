@@ -59,6 +59,6 @@ create table transactions (
     operation varchar(200),
     price double,
     quantity int,
-    txnTimeStamp varchar(50),
+    txnTimeStamp datetime,
 	PRIMARY KEY(id)
   );

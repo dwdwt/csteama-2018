@@ -32,6 +32,7 @@ public class OrderRepoIntegrationTest {
     public void canFindAllOrders() {
         assertThat(orderRepository.findAllOrders().size(), is(3));
     }
+
     
     @Test
     public void canFindByOrderId() {
@@ -42,4 +43,4 @@ public class OrderRepoIntegrationTest {
     	assertThat(orderRepository.getOrder(1), samePropertyValuesAs(new Order(1,company,"B","LIMIT",10.0,5,formatter.parseDateTime("16/08/2018 10:17:23"),user,"OPENED")));
     }
     
-}
+

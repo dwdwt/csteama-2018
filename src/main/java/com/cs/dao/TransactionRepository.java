@@ -12,6 +12,7 @@ import com.cs.domain.Transaction;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.List;
 
 @Repository
@@ -20,7 +21,7 @@ public class TransactionRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Transaction> findAll(){
+    public List<Transaction> findAll() {
         return jdbcTemplate.query("select * from transactions", new TransactionRowMapper());
     }
 
@@ -28,13 +29,21 @@ public class TransactionRepository {
         return jdbcTemplate.queryForObject("select * from transactions where id =?", new TransactionRowMapper(), id);
     }
 
-    //@TODO: UNFINISHED
+
     public void insertTxn(Transaction txn) {
-//        "INSERT INTO transactions()"
-////        return jdbcTemplate.create
+        String sql = MessageFormat.format("INSERT INTO transactions values ({0},{1},{2},{3},{4},{5})",
+                txn.getId(),
+                txn.getOrderId(),
+                "'" + txn.getOperation() + "'",
+                txn.getPrice(),
+                txn.getQuantity(),
+                "'" + txn.getTxnTimeStamp() + "'");
+
+        update(sql);
     }
 
-    public void update(String sql){
+
+    public void update(String sql) {
         jdbcTemplate.update(sql);
     }
 
@@ -47,7 +56,7 @@ public class TransactionRepository {
             txn.setPrice(rs.getDouble("price"));
             txn.setOperation(Operation.valueOf(rs.getString("operation")));
             txn.setQuantity(rs.getInt("quantity"));
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             txn.setTxnTimeStamp(formatter.parseDateTime(rs.getString("txnTimeStamp")));
 
             return txn;
