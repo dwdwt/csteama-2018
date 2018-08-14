@@ -17,7 +17,6 @@ insert into transactions(orderId,operation,price,quantity,txnTimeStamp) values (
 
 
 insert into orders values (1,1,'ABC.HK','B','LIMIT',10.0,5,'OPENED','2018-08-16 10:17:23');
-<<<<<<< HEAD
 insert into orders values (2,2,'DEF.HK','B','MARKET',10.0,10,'FILLED','2018-08-16 10:21:23');
 insert into orders values (3,3,'HIJ.HK','S','LIMIT',10.0,15,'CANCELLED','2018-08-16 10:17:23');
 insert into orders values (4,3,'HIJ.HK','S','LIMIT',10.0,20,'OPENED','2018-08-16 10:17:28');
@@ -25,9 +24,3 @@ insert into orders values (5,3,'HIJ.HK','S','MARKET',10.0,25,'FILLED','2018-08-1
 insert into orders values (6,3,'HIJ.HK','B','LIMIT',10.0,45,'CANCELLED','2018-08-16 10:37:23');
 insert into orders values (7,3,'HIJ.HK','S','LIMIT',10.0,555,'FILLED','2018-08-16 10:47:23');
 insert into orders values (8,3,'HIJ.HK','B','LIMIT',10.0,21,'CANCELLED','2018-08-16 10:57:23');
-
-=======
-insert into orders values (2,2,'DEF.HK','B','MARKET',10.0,5,'FILLED','2018-08-16 10:21:23');
-insert into orders values (3,3,'HIJ.HK','S','LIMIT',10.0,5,'CANCELLED','2018-08-16 10:17:23');
-insert into orders values (4,3,'HIJ.HK','S','LIMIT',10.0,5,'CANCELLED','2018-08-16 10:17:23');
->>>>>>> 668d014d1dbb634f221803c405e97d0a5070538e
