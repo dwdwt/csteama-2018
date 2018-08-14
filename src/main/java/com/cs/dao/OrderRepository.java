@@ -32,7 +32,7 @@ public class OrderRepository {
     public List<Order> findAllOrders(){
         return jdbcTemplate.query("SELECT * FROM orders", new OrderRowMapper());
     }
-    
+
     public Order findOrderById(int id) {
     	return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?", new OrderRowMapper(), id);
     }
@@ -81,7 +81,7 @@ public class OrderRepository {
 		return jdbcTemplate.query(query, new OrderRowMapper());
     	
     }
-    
+
     public void cancelOrder(int id) {
     	jdbcTemplate.update("UPDATE orders SET status = 'CANCELLED' where id = ?", id);
     }
