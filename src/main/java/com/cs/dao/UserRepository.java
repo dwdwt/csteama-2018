@@ -22,8 +22,8 @@ public class UserRepository {
 		return jdbcTemplate.query("SELECT * FROM users", new UserRowMapper());
 	}
 	
-	public User findUserById(int userId) {
-		return jdbcTemplate.queryForObject("SELECT * FROM users WHERE userId = ?", new UserRowMapper(), userId);
+	public User findUserById(int id) {
+		return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), id);
 	}
 	
 	class UserRowMapper implements RowMapper<User> {

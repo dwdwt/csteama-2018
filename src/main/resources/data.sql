@@ -7,9 +7,9 @@ insert into industries(name,description) values ('Software & Services', 'Service
 insert into industries(name,description) values ('Telecommunication Services', 'Services');
 
 
-insert into companies(name,tickerSymbol,industryName) values ('CS', 'CS.001', 'IT Services');
-insert into companies(name,tickerSymbol,industryName) values ('JP', 'JP.001', 'IT Services');
-insert into companies(name,tickerSymbol,industryName) values ('DBS', 'DBS.001', 'IT Services');
+insert into companies(name,tickerSymbol,industryName) values ('CS', 'ABC.HK', 'IT Services');
+insert into companies(name,tickerSymbol,industryName) values ('JP', 'DEF.HK', 'IT Services');
+insert into companies(name,tickerSymbol,industryName) values ('DBS', 'HIJ.HK', 'IT Services');
 
 insert into transactions values (1,1,'OPEN',10.0,5,'16/08/2018 10:17:23');
 insert into transactions values (2,2,'FILL',10.1,6,'16/08/2018 10:17:23');
