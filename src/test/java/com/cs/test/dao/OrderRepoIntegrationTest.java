@@ -1,12 +1,13 @@
 package com.cs.test.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +24,6 @@ import com.cs.domain.Role;
 import com.cs.domain.User;
 
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import static io.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -44,12 +42,10 @@ public class OrderRepoIntegrationTest {
     }
     @Test
     public void canFindAllOrders() {
-<<<<<<< HEAD
-        assertThat(orderRepository.findAllOrders().size(), is(8));
-=======
-        assertThat(orderRepository.findAllOrders().size(), is(4));
->>>>>>> 668d014d1dbb634f221803c405e97d0a5070538e
+    	assertThat(orderRepository.findAllOrders().size(), is(8));
     }
+
+ 
     
     
     @Test

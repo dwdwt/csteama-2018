@@ -60,26 +60,17 @@
 		    <groupId>joda-time</groupId>
 		    <artifactId>joda-time</artifactId>
 		</dependency>
-<<<<<<< HEAD
+
 		<!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
 		<dependency>
 		    <groupId>io.rest-assured</groupId>
 		    <artifactId>rest-assured</artifactId>
 		    <scope>test</scope>
 		</dependency>
-
-		
-		
-=======
-        <dependency>
+		<dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-		</dependency>
->>>>>>> 668d014d1dbb634f221803c405e97d0a5070538e
 	</dependencies>
 
 	<build>
