@@ -1,14 +1,14 @@
 drop table users if exists;
 
 create table users(
-	userId int(11) NOT NULL AUTO_INCREMENT,
-	firstName varchar(100),
-	lastName varchar(100),
-	contact varchar(20)
-	email varchar(100),
-	role varchar(20),
-	PRIMARY KEY(userId)
-);
+  	userId int(11) NOT NULL AUTO_INCREMENT,
+  	firstName varchar(100),
+  	lastName varchar(100),
+  	contact varchar(20),
+  	email varchar(100),
+  	role varchar(20),
+  	PRIMARY KEY(userId)
+  );
 
 drop table orders if exists;
 
@@ -32,3 +32,15 @@ create table sectors(
 	description varchar(200),
 	PRIMARY KEY(name)
 );
+
+drop table transactions if exists;
+
+create table transactions (
+    id int(11) NOT NULL AUTO_INCREMENT,
+	orderId int(11),
+    operation varchar(200),
+    price double,
+    quantity int,
+    txnTimeStamp varchar(50),
+	PRIMARY KEY(id)
+  );
