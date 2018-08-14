@@ -19,7 +19,7 @@ public class OrderService {
         return orderRepo.findAllOrders();
     }
 	
-	public List<Order> filterOrdersByCriteria(Map<String, String> criteriaMap){
-		return orderRepo.filterOrdersByCriteria(criteriaMap);
+	public List<Order> filterAndSortOrdersByCriteria(Map<String, String> criteriaMap, String sortParams, String sortSequence){
+		return orderRepo.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
 	}
 }

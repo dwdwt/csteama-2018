@@ -1,9 +1,10 @@
 package com.cs.test.dao;
 
-import com.cs.Csteama2018Application;
-import com.cs.dao.TransactionRepository;
-import com.cs.domain.Transaction;
-import org.joda.time.DateTime;
+import static com.cs.domain.Operation.OPEN;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
+import static org.hamcrest.core.Is.is;
+
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
@@ -12,10 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.cs.domain.Operation.OPEN;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
-import static org.hamcrest.core.Is.is;
+import com.cs.Csteama2018Application;
+import com.cs.dao.TransactionRepository;
+import com.cs.domain.Transaction;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Csteama2018Application.class})

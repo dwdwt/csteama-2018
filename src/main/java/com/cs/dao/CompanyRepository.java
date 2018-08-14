@@ -36,7 +36,7 @@ public class CompanyRepository {
 			String name = rs.getString("name");
 			String tickerSymbol = rs.getString("tickerSymbol");
 			String sectorName = rs.getString("industryName");
-			company = new Company(name, tickerSymbol, industryRepo.findIndustryByName(sectorName));
+			company = new Company(tickerSymbol, name, industryRepo.findIndustryByName(sectorName));
 			return company;
 		}
 		
