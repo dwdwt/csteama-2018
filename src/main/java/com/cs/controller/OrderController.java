@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cs.domain.Order;
+import com.cs.exception.InvalidActionException;
+import com.cs.exception.InvalidParameterException;
 import com.cs.service.OrderService;
 
 @RestController
@@ -53,13 +56,68 @@ public class OrderController {
 	
 	@RequestMapping("/cancel/{orderId}")
 	public List<Order> cancelOrder(@PathVariable("orderId")int orderId) {
-		Order order = orderSvc.findOrderById(orderId);
+		try {
+			Order order = orderSvc.findOrderById(orderId);
+			
+			if(!order.getStatus().equals("FILLED")) {
+				orderSvc.cancelOrder(orderId);
+			} else {
+				throw new InvalidActionException("Order " + orderId + " has been filled. Unable to cancel order.");
+			}
+		} catch (EmptyResultDataAccessException e) {
+			throw new InvalidParameterException("Invalid order id.");
+		}
+		return orderSvc.findAllOrders();
+	}
+	
+	@RequestMapping("/update/{orderId}")
+	public List<Order> updateOrder(@PathVariable("orderId")int orderId,
+			@RequestParam(value="quantity", defaultValue="")String noOfShares,
+			@RequestParam(value="price", defaultValue="")String sharePrice,
+			@RequestParam(value="orderType", defaultValue="")String orderType) {
 		
-		//TO-DO: CUSTOM EXCEPTION FOR INVALID ORDER ID AND FILLED ORDERS
-		if(order != null && !order.getStatus().equals("FILLED")) {
-			orderSvc.cancelOrder(orderId);
+		if(noOfShares.isEmpty() && sharePrice.isEmpty() && orderType.isEmpty()) {
+			throw new InvalidParameterException("No update parameters found.");
 		}
 		
+		Integer shares = null;
+		if(!noOfShares.isEmpty()) {
+			try {
+				shares = Integer.parseInt(noOfShares);
+			} catch (NumberFormatException e) {
+				throw new InvalidParameterException("Number of shares has to be an integer value.");
+			}
+		}
+		
+		Double price = null;
+		if(!sharePrice.isEmpty()) {
+			try {
+				price = Double.parseDouble(sharePrice);
+			} catch (NumberFormatException e) {
+				throw new InvalidParameterException("Price has to be a double value.");
+			}
+		}
+		
+		if(!orderType.isEmpty() && !orderType.matches("MARKET|LIMIT")) {
+			throw new InvalidParameterException("Order type has to be either MARKET or LIMIT.");
+		}
+		
+		Map<String, Object> updateMap = new HashMap<>();
+		if(!noOfShares.isEmpty())updateMap.put("noOfShares",shares);
+		if(!sharePrice.isEmpty())updateMap.put("price",price);
+		if(!orderType.isEmpty())updateMap.put("orderType",orderType);
+		
+		try {
+			Order order = orderSvc.findOrderById(orderId);
+			
+			if(order.getStatus().matches("FILLED|CANCELLED")) {
+				throw new InvalidActionException("Order " + orderId + " has been filled/cancelled. Unable to update order.");
+			} 
+			
+			orderSvc.updateOrder(orderId, updateMap);
+		} catch (EmptyResultDataAccessException e) {
+			throw new InvalidParameterException("Invalid order id.");
+		}
 		return orderSvc.findAllOrders();
 	}
 	

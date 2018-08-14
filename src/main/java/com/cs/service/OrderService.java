@@ -30,4 +30,8 @@ public class OrderService {
 	public void cancelOrder(int id) {
 		orderRepo.cancelOrder(id);
 	}
+	
+	public void updateOrder(int id, Map<String, Object> updateMap) {
+		orderRepo.updateOrder(id, updateMap);;
+	}
 }
