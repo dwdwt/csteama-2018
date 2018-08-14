@@ -21,8 +21,7 @@ create table orders(
 	price double,
 	noOfShares int,
 	status varchar(20),
-	orderTimeStamp datetime,
-	PRIMARY KEY(id)
+	orderTimeStamp datetime
 );
 
 drop table quotes if exists;

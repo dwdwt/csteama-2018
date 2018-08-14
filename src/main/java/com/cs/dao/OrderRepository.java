@@ -70,7 +70,7 @@ public class OrderRepository {
     		query = query.substring(0, query.length()-5);
 		}
 		
-    	query += " GROUP BY side, orderType, status";
+    	
     	 
     	if (!sortParams.isEmpty()) {
     		query += " ORDER BY " + sortParams + " " + sortSequence;
@@ -85,7 +85,7 @@ public class OrderRepository {
         public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
             Order order = new Order();
             order.setOrderId(rs.getInt("id"));
-            order.setTrader(userRepo.findUserById(rs.getInt("id")));
+            order.setTrader(userRepo.findUserById(rs.getInt("userid")));
             order.setCompany(companyRepo.findCompanyByTickerSymbol(rs.getString("tickerSymbol")));
             order.setSide(rs.getString("side"));
             order.setType(rs.getString("orderType"));
