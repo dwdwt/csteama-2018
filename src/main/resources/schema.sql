@@ -21,7 +21,7 @@ create table orders(
 	price double,
 	noOfShares int,
 	status varchar(20),
-	orderTimeStamp varchar(50),
+	orderTimeStamp datetime,
 	PRIMARY KEY(id)
 );
 
@@ -59,6 +59,6 @@ create table transactions (
     operation varchar(200),
     price double,
     quantity int,
-    txnTimeStamp varchar(50),
+    txnTimeStamp datetime,
 	PRIMARY KEY(id)
   );
