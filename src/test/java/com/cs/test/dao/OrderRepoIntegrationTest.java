@@ -26,20 +26,15 @@ import com.cs.domain.User;
 import io.restassured.RestAssured;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-		classes = {Csteama2018Application.class})
+@SpringBootTest(classes = {Csteama2018Application.class})
 public class OrderRepoIntegrationTest {
 
     @Autowired
     OrderRepository orderRepository;
     
-    @Autowired
-    private int serverPort;
     
-    @Before
-    public void init() {
-    	RestAssured.port=serverPort;
-    }
+    
+    
     @Test
     public void canFindAllOrders() {
     	assertThat(orderRepository.findAllOrders().size(), is(8));
