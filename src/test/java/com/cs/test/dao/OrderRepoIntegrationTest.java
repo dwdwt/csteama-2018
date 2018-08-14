@@ -21,6 +21,7 @@ public class OrderRepoIntegrationTest {
 
     @Test
     public void canFindAllOrders() {
-        assertThat(orderRepository.findAll().size(), is(3));
+        assertThat(orderRepository.findAllOrders().size(), is(3));
     }
+    
 }
