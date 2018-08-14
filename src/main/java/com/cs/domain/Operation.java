@@ -1,4 +1,4 @@
-package com.cs.ta.domain;
+package com.cs.domain;
 
 public enum Operation {
     OPEN,FILL,CANCEL

@@ -1,7 +1,5 @@
 package com.cs.dao;
 
-import com.cs.ta.domain.Operation;
-import com.cs.ta.domain.Transaction;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.cs.domain.Operation;
+import com.cs.domain.Transaction;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

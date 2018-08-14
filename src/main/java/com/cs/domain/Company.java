@@ -1,4 +1,4 @@
-package com.cs.ta.domain;
+package com.cs.domain;
 
 public class Company {
 	private String tickerSymbol;

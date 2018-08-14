@@ -1,4 +1,4 @@
-package com.cs.ta.domain;
+package com.cs.domain;
 
 import org.joda.time.DateTime;
 
