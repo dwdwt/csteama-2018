@@ -36,12 +36,14 @@ public class TransactionRepoIntegrationTest {
     }
 
     @Test
-    public void canInsertTransaction() {
+    public void canInsertTransactionAndAutoIncrementId() {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-
         Transaction txn = new Transaction(4,1,OPEN,10.0,5,formatter.parseDateTime("2008-11-11 13:23:44"));
         transactionRepository.insertTxn(txn);
         assertThat(transactionRepository.findById(txn.getId()), samePropertyValuesAs(txn));
+
+        //Teardown
+        transactionRepository.removeTxn(txn.getId());
     }
 
 }

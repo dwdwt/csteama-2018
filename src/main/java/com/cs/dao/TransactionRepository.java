@@ -31,14 +31,18 @@ public class TransactionRepository {
 
 
     public void insertTxn(Transaction txn) {
-        String sql = MessageFormat.format("INSERT INTO transactions values ({0},{1},{2},{3},{4},{5})",
-                txn.getId(),
+        String sql = MessageFormat.format("INSERT INTO transactions(orderId,operation,price,quantity,txnTimeStamp) values ({0},{1},{2},{3},{4})",
                 txn.getOrderId(),
                 "'" + txn.getOperation() + "'",
                 txn.getPrice(),
                 txn.getQuantity(),
                 "'" + txn.getTxnTimeStamp() + "'");
 
+        update(sql);
+    }
+
+    public void removeTxn(int id) {
+        String sql = MessageFormat.format("DELETE from transactions where id = {0}", id);
         update(sql);
     }
 
