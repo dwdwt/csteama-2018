@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cs.domain.Company;
 import com.cs.domain.Order;
 import com.cs.exception.InvalidActionException;
 import com.cs.exception.InvalidParameterException;
+import com.cs.service.CompanyService;
 import com.cs.service.OrderService;
 
 @RestController
@@ -22,10 +27,8 @@ public class OrderController {
 	@Autowired
 	OrderService orderSvc;
 	
-//	@RequestMapping(value="/orders")
-//	public List<Order> findAllOrders() {
-//		return orderSvc.findAllOrders();
-//	}
+	@Autowired
+	CompanyService companySvc;
 	
 	@RequestMapping("/orders")
 	public List<Order> findOrdersWithFilterAndSortingCriteria(
@@ -42,14 +45,84 @@ public class OrderController {
 		
 		Map<String, String> criteriaMap = new HashMap<>();
 		
-		if(!side.isEmpty())criteriaMap.put("side",side);
-		if(!type.isEmpty())criteriaMap.put("orderType",type);
-		if(!status.isEmpty())criteriaMap.put("status",status);
-		if(!tickerSymbol.isEmpty())criteriaMap.put("tickerSymbol",tickerSymbol);
-		if(!fromOrderQty.isEmpty())criteriaMap.put("fromOrderQty",fromOrderQty);
-		if(!toOrderQty.isEmpty())criteriaMap.put("toOrderQty",toOrderQty);
-		if(!fromTimestamp.isEmpty())criteriaMap.put("fromTimestamp",fromTimestamp);
-		if(!toTimestamp.isEmpty())criteriaMap.put("toTimestamp",toTimestamp);
+		// Parameter Validation
+		if(!side.isEmpty()) {
+			if(!side.matches("B|S")) {
+				throw new InvalidParameterException("Invalid side parameter. Input only B or S.");
+			}else {
+				criteriaMap.put("side",side);
+			}
+		}
+		
+		if(!type.isEmpty()) {
+			if(!type.matches("MARKET|LIMIT")) {
+				throw new InvalidParameterException("Invalid order type parameter. Input only MARKET or LIMIT.");
+			}else {
+				criteriaMap.put("orderType",type);
+			}
+		}
+		
+		if(!status.isEmpty()) {
+			if(!status.matches("OPENED|FILLED|CANCELLED")) {
+				throw new InvalidParameterException("Invalid order status parameter. Input only OPENED, FILLED or CANCELLED.");
+			}else {
+				criteriaMap.put("status",status);
+			}
+		}
+		
+		if(!tickerSymbol.isEmpty()) {
+			try {
+				Company toFind = companySvc.findCompanyByTickerSymbol(tickerSymbol);
+				criteriaMap.put("tickerSymbol",tickerSymbol);
+			} catch (EmptyResultDataAccessException e) {
+				throw new InvalidParameterException("Ticker symbol does not exist.");
+			}
+		}
+		
+		if(!fromOrderQty.isEmpty()) {
+			try {
+				Integer.parseInt(fromOrderQty);
+				criteriaMap.put("fromOrderQty",fromOrderQty);
+			} catch (NumberFormatException e) {
+				throw new InvalidParameterException("Invalid from order quantity. Input only integers.");
+			}
+		}
+		
+		if(!toOrderQty.isEmpty()) {
+			try {
+				Integer.parseInt(toOrderQty);
+				criteriaMap.put("fromOrderQty",toOrderQty);
+			} catch (NumberFormatException e) {
+				throw new InvalidParameterException("Invalid to order quantity. Input only integers.");
+			}
+		}
+		
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		DateTime from = null;
+		if(!fromTimestamp.isEmpty()) {
+			try {
+				from = formatter.parseDateTime(fromTimestamp);
+				criteriaMap.put("fromTimestamp",fromTimestamp);
+			} catch(IllegalArgumentException e) {
+				throw new InvalidParameterException("Invalid from timestamp. Input timestamp in yyyy-MM-dd HH:mm:ss format only.");
+			}
+		}
+		
+		DateTime to = null;
+		if(!toTimestamp.isEmpty()) {
+			try {
+				to = formatter.parseDateTime(toTimestamp);
+				criteriaMap.put("toTimestamp",toTimestamp);
+			} catch(IllegalArgumentException e) {
+				throw new InvalidParameterException("Invalid to timestamp. Input timestamp in yyyy-MM-dd HH:mm:ss format only.");
+			}
+		}
+		
+		if(to != null && from != null) {
+			if(to.isBefore(from)) {
+				throw new InvalidParameterException("To timestamp cannot be before From timestamp.");
+			}
+		}
 		
 		return orderSvc.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
 	}
