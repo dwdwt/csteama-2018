@@ -88,21 +88,23 @@ public class OrderRepository {
     public void updateOrder(int id, Map<String, Object> updateMap) {
     	String query = "UPDATE orders SET ";
     	
-    	Iterator updateIterator = updateMap.entrySet().iterator();
-		while (updateIterator.hasNext()) {
-		    Map.Entry pair = (Map.Entry)updateIterator.next();
-		    String key = (String) pair.getKey();
-		    Object value = pair.getValue();
-		    if (value != null && value instanceof String) {
-		    	query += (key + "='" + value + "',");
-		    } else {
-		    	query += (key + "=" + value + ",");
-		    }
-		}
-		
-		// Remove the last ,
-		query = query.substring(0, query.length()-1) + " WHERE id = ?";
-		jdbcTemplate.update(query, id);
+    	if (updateMap != null) {
+    		Iterator updateIterator = updateMap.entrySet().iterator();
+    		while (updateIterator.hasNext()) {
+    		    Map.Entry pair = (Map.Entry)updateIterator.next();
+    		    String key = (String) pair.getKey();
+    		    Object value = pair.getValue();
+    		    if (value != null && value instanceof String) {
+    		    	query += (key + "='" + value + "',");
+    		    } else {
+    		    	query += (key + "=" + value + ",");
+    		    }
+    		}
+    		
+    		// Remove the last ,
+    		query = query.substring(0, query.length()-1) + " WHERE id = ?";
+    		jdbcTemplate.update(query, id);
+    	}
     }
 
 //    public boolean placeNewOrder(Order order)
