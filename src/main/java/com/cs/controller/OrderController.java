@@ -175,6 +175,18 @@ public class OrderController {
 		return orderSvc.getOrdersByUserId(uid);
 	}
 	
+	//last time stamp, total number of orders
+	@RequestMapping("/orders/{userId}/summary")
+	public String listOrderSummaryByTrader(@PathVariable("userId")int uid) {
+		String a= " ";
+		a+=orderSvc.getLastOrderTimestamp(uid).toString();
+		a+=" "+Integer.toString(orderSvc.getTotalOrdersBystatus(uid, "OPENED"));
+		a+=" "+Integer.toString(orderSvc.getTotalOrdersBystatus(uid, "FILLED"));
+		a+=" "+Integer.toString(orderSvc.getTotalOrdersBystatus(uid, "CANCELLED"));
+		return a;
+	}
+	
+	
 	
 	
 	@RequestMapping("/update/{orderId}")
