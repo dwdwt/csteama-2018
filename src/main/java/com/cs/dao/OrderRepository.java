@@ -81,6 +81,11 @@ public class OrderRepository {
     	
     }
 
+    public boolean userHasAnyOrder(int userId){
+		List<Order> orders =  jdbcTemplate.query("SELECT * FROM orders WHERE userid = ?", new OrderRowMapper(), userId);
+		return !orders.isEmpty();
+	}
+
     public void cancelOrder(int id) {
     	jdbcTemplate.update("UPDATE orders SET status = 'CANCELLED' where id = ?", id);
     }
