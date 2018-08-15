@@ -2,8 +2,6 @@ package com.cs.service;
 
 import java.util.List;
 
-import com.cs.dao.OrderRepository;
-import com.cs.exception.InvalidActionException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,7 @@ public class UserService {
 
 	@Autowired
 	OrderRepository orderRepository;
-	
+
 	public List<User> findAllTraders(){
         return userRepo.findAllUsers();
 	}

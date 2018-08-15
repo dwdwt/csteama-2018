@@ -143,6 +143,15 @@ public class OrderController {
 		return orderSvc.findAllOrders();
 	}
 	
+	
+	//find orders by userid
+	@RequestMapping("/orders/{userId}")
+	public List<Order> findOrdersByUserId(@PathVariable("userId")int uid) {
+		return orderSvc.getOrdersByUserId(uid);
+	}
+	
+	
+	
 	@RequestMapping("/update/{orderId}")
 	public List<Order> updateOrder(@PathVariable("orderId")int orderId,
 			@RequestParam(value="quantity", defaultValue="")String noOfShares,
