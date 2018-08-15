@@ -113,7 +113,17 @@ public class OrderRepository {
     	}
     }
 
-//    public boolean placeNewOrder(Order order)
+    public Order insertOrder(Order order) {
+    	String query = "INSERT into ORDERS values("
+    			+ order.getOrderId() +"," + order.getTrader().getId()+ ",'"
+    			+ order.getCompany().getTickerSymbol() + "','"
+    			+ order.getSide() + "','" + order.getType() + "',"
+    			+ order.getNoOfShares() + "," + order.getPrice() + ",'"
+    			+ order.getStatus() + "','" + order.getTimeStamp() +"')";
+    	
+    	jdbcTemplate.execute(query);
+    	return order;
+    }
     class OrderRowMapper implements RowMapper<Order> {
         @Override
         public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
