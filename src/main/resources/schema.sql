@@ -7,6 +7,7 @@ create table users(
   	contact varchar(20),
   	email varchar(100),
   	role varchar(20),
+    address varchar(100),
   	PRIMARY KEY(id)
 );
 
