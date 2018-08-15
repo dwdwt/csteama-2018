@@ -27,11 +27,6 @@ public class UserService {
 		return userRepo.findUserById(id);
 	}
 	
-	
-	public void addUsers(int uid, String firstName, String lastName, String contact, String email, String address) {
-		User ur = new User(uid, firstName, lastName, contact, email, Role.TRADER, address);
-		userRepo.insertUser(ur);
-		return;
-	}
+
 
 }

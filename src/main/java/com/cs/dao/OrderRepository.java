@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
 
 
@@ -124,4 +125,12 @@ public class OrderRepository {
             return order;
         }
     }
+
+
+    //find order by userId
+    public List<Order> findOrdersByUserId(int userId){
+    	return jdbcTemplate.query("SELECT * FROM orders WHERE userId = ?", new OrderRowMapper(), userId);
+    }
+    
+    
 }

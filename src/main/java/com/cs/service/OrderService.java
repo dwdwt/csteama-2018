@@ -34,4 +34,9 @@ public class OrderService {
 	public void updateOrder(int id, Map<String, Object> updateMap) {
 		orderRepo.updateOrder(id, updateMap);;
 	}
+	
+	//find orders by user Id
+	public List<Order> getOrdersByUserId(int uid){
+		return orderRepo.findOrdersByUserId(uid);
+	}
 }
