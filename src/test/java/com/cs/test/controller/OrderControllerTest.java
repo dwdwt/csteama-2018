@@ -6,7 +6,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import static io.restassured.RestAssured.when;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 
 import java.util.ArrayList;
@@ -471,6 +473,17 @@ public class OrderControllerTest {
 		Response response = when().get("/orders?sortSeq=asc").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Invalid sorting parameters. Both sort and sortSeq must be provided."));
+	}
+
+	@Test
+	public void canListOrdersByTrader() {
+		given().
+				accept(MediaType.APPLICATION_JSON_VALUE).when().get("/orders/3/summary").
+				then().
+				statusCode(SC_OK).body("lastOrderTimeStamp", equalTo("2018-08-16 10:57:23"),
+				"opened", equalTo(1),
+				"fulfilled", equalTo(2),
+				"cancelled", equalTo(2));
 	}
 	
 }
