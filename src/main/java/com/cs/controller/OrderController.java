@@ -189,8 +189,8 @@ public class OrderController {
                 orderSvc.getTotalOrdersBystatus(uid, "CANCELLED")
         );
 
-
     }
+    
 
 
     @RequestMapping("/update/{orderId}")
