@@ -24,3 +24,10 @@ insert into orders values (5,3,'HIJ.HK','S','MARKET',10.0,25,'FILLED','2018-08-1
 insert into orders values (6,3,'HIJ.HK','B','LIMIT',10.0,45,'CANCELLED','2018-08-16 10:37:23');
 insert into orders values (7,3,'HIJ.HK','S','LIMIT',10.0,555,'FILLED','2018-08-16 10:47:23');
 insert into orders values (8,3,'HIJ.HK','B','LIMIT',10.0,21,'CANCELLED','2018-08-16 10:57:23');
+
+insert into quotes values (2,3,10,'2018-08-16 10:21:23');
+insert into quotes values (3,4,20,'2018-08-16 10:17:23');
+insert into quotes values (4,5,5,'2018-08-16 10:17:28');
+insert into quotes values (6,7,10,'2018-08-16 10:27:23');
+insert into quotes values (7,8,15,'2018-08-16 10:37:23');
+insert into quotes values (1,2,10,'2018-08-16 10:47:23');
