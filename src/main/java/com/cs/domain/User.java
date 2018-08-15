@@ -78,5 +78,10 @@ public class User {
 		super();
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		User another = (User) o;
+		return another.userId == this.userId;
+	}
 	
 }

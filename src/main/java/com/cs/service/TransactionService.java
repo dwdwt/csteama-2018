@@ -6,15 +6,13 @@ import com.cs.domain.Operation;
 import com.cs.domain.Order;
 import com.cs.domain.Transaction;
 import com.cs.view.TransactionView;
+import org.assertj.core.util.Strings;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TransactionService {
@@ -42,10 +40,14 @@ public class TransactionService {
 		return;
 	}
 
+	public List<TransactionView> getAllTransactionViewsByCriteria(String userId, String stockSymbol, String fromDate, String toDate, String returnItemString) {
 
-	public List<TransactionView> getAllTransactionViews() {
 		List<TransactionView> transactionViewsList = new ArrayList<TransactionView>();
-		getAllTransactions().stream().forEach(it -> transactionViewsList.add(new TransactionView(it,orderRepository.findOrderById(it.getOrderId()))));
+		transactionRepository.findTransactionByCriteria(userId,stockSymbol,fromDate,toDate)
+				.stream()
+				.forEach(it -> transactionViewsList.add(Strings.isNullOrEmpty(returnItemString) ?
+						new TransactionView(it,orderRepository.findOrderById(it.getOrderId())) :
+						new TransactionView(it,orderRepository.findOrderById(it.getOrderId()),returnItemString.split(","))));
 		return transactionViewsList;
 	}
 }
