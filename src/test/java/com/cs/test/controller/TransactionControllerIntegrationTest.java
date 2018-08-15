@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.restassured.RestAssured.given;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -30,20 +31,20 @@ public class TransactionControllerIntegrationTest {
     }
 
     @Test
-    public void canViewAllTransactions() {
+    public void canViewAllTransactionsInDescOrderForTimeStamp() {
         given().
                 accept(MediaType.APPLICATION_JSON_VALUE).when().get("/transactions").
                 then().
-                statusCode(SC_OK).body("[0].txnId", equalTo(1),
-                "[0].userId", equalTo(1),
-                "[0].operation", equalTo("OPEN"),
-                "[0].timeStamp", equalTo("2008-11-11T13:23:44.000-05:00"),
-                "[0].stockSymbol", equalTo("ABC.HK"),
-                "[0].quantity", equalTo(5),
-                "[0].askPrice", equalTo(10.0f),
+                statusCode(SC_OK).body("[0].txnId", equalTo(3),
+                "[0].userId", equalTo(2),
+                "[0].operation", equalTo("CANCEL"),
+                "[0].timeStamp", equalTo("2012-11-11T13:23:44.000-05:00"),
+                "[0].stockSymbol", equalTo("HIJ.HK"),
+                "[0].quantity", equalTo(7),
+                "[0].askPrice", equalTo(10.2f),
                 "[0].typeOfOrder", equalTo("LIMIT"),
                 "[1].txnId", equalTo(2),
-                "[2].txnId", equalTo(3));
+                "[2].txnId", equalTo(1));
     }
 
     @Test
@@ -64,22 +65,48 @@ public class TransactionControllerIntegrationTest {
     }
 
     @Test
-    public void canViewTransactionsByTimeStampCriteria() {
+    public void canViewTransactionsByTimeStampCriteriaWithFilter() {
         given().
                 accept(MediaType.APPLICATION_JSON_VALUE).when().get("/transactions?fromDate=2010-11-11&toDate=2012-11-12").
                 then().
-                statusCode(SC_OK).body("[0].txnId", equalTo(2),
-                "[0].userId", equalTo(2),
-                "[0].operation", equalTo("FILL"),
-                "[0].timeStamp", equalTo("2010-11-11T13:23:44.000-05:00"),
-                "[0].stockSymbol", equalTo("DEF.HK"),
-                "[0].quantity", equalTo(6),
-                "[0].askPrice", equalTo(10.1f),
-                "[0].typeOfOrder", equalTo("MARKET"),
-                "[1].txnId", equalTo(3),
+                statusCode(SC_OK).body("[0].txnId", equalTo(3),
+
+                "[1].txnId", equalTo(2),
+                "[1].userId", equalTo(2),
+                "[1].operation", equalTo("FILL"),
+                "[1].timeStamp", equalTo("2010-11-11T13:23:44.000-05:00"),
+                "[1].stockSymbol", equalTo("DEF.HK"),
+                "[1].quantity", equalTo(6),
+                "[1].askPrice", equalTo(10.1f),
+                "[1].typeOfOrder", equalTo("MARKET"),
+
                 "[2]", equalTo(null));
     }
 
+    @Test
+    public void canViewTransactionsByUserAndSymbolCriteriaByFilter() {
+        given().
+                accept(MediaType.APPLICATION_JSON_VALUE).when().get("/transactions?userId=2&stockSymbol=DEF.HK&filter=txnId,userId,quantity").
+                then().
+                statusCode(SC_OK).body("[0].txnId", equalTo(2),
+                "[0].userId", equalTo(2),
+                "[0].operation", equalTo(null),
+                "[0].timeStamp", equalTo(null),
+                "[0].stockSymbol", equalTo(null),
+                "[0].quantity", equalTo(6),
+                "[0].askPrice", equalTo(null),
+                "[0].typeOfOrder", equalTo(null),
+                "[1]", equalTo(null),
+                "[2]", equalTo(null));
+    }
 
+    //TODO not passing yet
+    @Test
+    public void withHaveServerErrorWhenArgumentIsNotGood() {
+        given().
+                accept(MediaType.APPLICATION_JSON_VALUE).when().get("/transactions?userId=2&stockSymbol=DEF.HK&filter=txnId,rubbish").
+                then().
+                statusCode(SC_BAD_REQUEST).body("error", equalTo("No Such Filter"));
+    }
 
 }

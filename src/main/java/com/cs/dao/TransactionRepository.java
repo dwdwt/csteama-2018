@@ -47,7 +47,7 @@ public class TransactionRepository {
 
     public List<Transaction> findTransactionByCriteria(String userid, String stockSymbol, String fromDate, String toDate){
         QueryBuilder queryBuilder = new QueryBuilder();
-        String query = queryBuilder.createCriteria().setUserId(userid).setSymbol(stockSymbol).setFrom(fromDate).setTo(toDate).toString();
+        String query = queryBuilder.createCriteria().setUserId(userid).setSymbol(stockSymbol).setFrom(fromDate).setTo(toDate).inDescByTimeStamp().toString();
         return jdbcTemplate.query(query, new TransactionRowMapper());
     }
 
@@ -100,6 +100,10 @@ public class TransactionRepository {
 
         public QueryBuilder setTo(String toDate){
             if (toDate != null) query += " and t.txnTimeStamp <= '" + toDate + "'";
+            return this;
+        }
+
+        public QueryBuilder inDescByTimeStamp(){ query += " order by t.txnTimeStamp desc ";
             return this;
         }
 
