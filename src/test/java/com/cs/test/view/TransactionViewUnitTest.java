@@ -3,6 +3,7 @@ package com.cs.test.view;
 import com.cs.Csteama2018Application;
 import com.cs.dao.OrderRepository;
 import com.cs.domain.*;
+import com.cs.exception.InvalidParameterException;
 import com.cs.view.TransactionView;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 public class TransactionViewUnitTest {
 
-	@Test (expected = IllegalArgumentException.class)
+	@Test (expected = InvalidParameterException.class)
 	public void willThrowExceptionWhenFilterContainsUnknownThing(){
 		Transaction txn = new Transaction(1,1,Operation.OPEN,1.0,1,null);
 		Order someOrder = mock(Order.class);
