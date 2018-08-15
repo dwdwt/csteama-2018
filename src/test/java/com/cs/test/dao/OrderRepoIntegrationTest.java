@@ -204,19 +204,26 @@ public class OrderRepoIntegrationTest {
     	assertThat(order.getType(), is("LIMIT"));
     }
     
-    /*
-    @Test
-    public void allOrdersReturned() {
-    	Response response =
-    		when()
-    			.get("/orders?side=B").
-    		then()
-    			.statusCode(200).
-    		and()
-    			.extract().response();
-    	Order[] jsonResponse = response.as(Order[].class);
-    	assertThat(jsonResponse.length, is(4));
-    }*/
+  //Story 1 Tests
+  	@Test
+  	public void insertBuyMarketOrder() {
+  		orderRepository.insertOrder();
+  	}
+  	
+  	@Test
+  	public void insertBuyLimitOrder() {
+  		orderRepository.insertOrder();
+  	}
+  	
+  	@Test
+  	public void insertSellMarketOrder() {
+  		orderRepository.insertOrder();
+  	}
+  	
+  	@Test
+  	public void insertSellLimitOrder() {
+  		orderRepository.insertOrder();
+  	}
     
 
 }

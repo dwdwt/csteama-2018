@@ -34,4 +34,8 @@ public class OrderService {
 	public void updateOrder(int id, Map<String, Object> updateMap) {
 		orderRepo.updateOrder(id, updateMap);;
 	}
+	
+	public Order insertOrder(Order order) {
+		return orderRepo.insertOrder(order);
+	}
 }
