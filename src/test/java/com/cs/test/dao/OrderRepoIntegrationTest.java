@@ -3,8 +3,11 @@ package com.cs.test.dao;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -276,4 +279,14 @@ public class OrderRepoIntegrationTest {
 		assertThat(orderRepository.getOrderCountByStatus(3,"CANCELLED"), is(2));
 		assertThat(orderRepository.getOrderCountByStatus(2,"FILLED"), is(1));
 	}
+	
+	@Test 
+	public void canGetTopfiveByNumberofTrades() {
+		//Integer[] result = new Integer[] {3,2,7,8,6};
+		List<Integer> list = Arrays.asList(4,6,5,2,3);
+		assertEquals(orderRepository.getTopfiveByNumberofTrades(), list);
+	}
+	
+	
+	
 }

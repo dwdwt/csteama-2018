@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
+import com.cs.domain.User;
 
 
 @Repository
@@ -161,6 +162,17 @@ public class OrderRepository {
     	String query = " SELECT Count(*) FROM orders WHERE ";
     	query += " userId = " + userId + " And status = '" + status + "'";
     	return jdbcTemplate.queryForObject(query, Integer.class);
+    }
+    
+    
+    //top 5 traders by number of tardes
+    public List<Integer> getTopfiveByNumberofTrades(){
+    	String query = "SELECT userId FROM orders WHERE status = 'FILLED' GROUP BY userId ORDER BY COUNT(id) DESC LIMIT 5 ";
+    	List<Integer> top5 = jdbcTemplate.queryForList(query, Integer.class);
+    	return top5;
+    
+    	//return null;
+    	
     }
     
 }

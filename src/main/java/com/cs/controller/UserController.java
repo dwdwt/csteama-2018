@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import com.cs.domain.Order;
 import com.cs.domain.User;
+import com.cs.service.OrderService;
 import com.cs.service.UserService;
+import com.cs.view.TraderOrderView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +17,9 @@ import java.util.List;
 public class UserController {
 	@Autowired
 	UserService userSvc;
+	
+	@Autowired
+	OrderService orderSvc;
 	
 	
 	@RequestMapping("/users")
@@ -41,6 +47,12 @@ public class UserController {
 	public void removeUser(@PathVariable int id){
 		userSvc.removeUser(id);
 	}
+	
+    //top 5 traders by trade 
+    @RequestMapping("/trader/top5")
+    public List<User> findTopFiveTrader() {
+        return orderSvc.getTop5tradersbyNumberofTrades();
+    }
 
 
 
