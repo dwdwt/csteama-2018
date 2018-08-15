@@ -7,6 +7,14 @@ public class User {
 	private String contact;
 	private String email;
 	private Role role;
+	private String address;
+	
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
 	public int getUserId() {
 		return userId;
 	}
@@ -43,7 +51,9 @@ public class User {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	public User(int userId, String firstName, String lastName, String contact, String email, Role role) {
+
+	public User(int userId, String firstName, String lastName, String contact, String email, Role role,
+			String address) {
 		super();
 		this.userId = userId;
 		this.firstName = firstName;
@@ -51,6 +61,18 @@ public class User {
 		this.contact = contact;
 		this.email = email;
 		this.role = role;
+		this.address = address;
+	}
+	
+	
+	public User(String firstName, String lastName, String contact, String email, Role role, String address) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.contact = contact;
+		this.email = email;
+		this.role = role;
+		this.address = address;
 	}
 	public User() {
 		super();

@@ -2,6 +2,7 @@ package com.cs.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class UserRepository {
 		return jdbcTemplate.query("SELECT * FROM users", new UserRowMapper());
 	}
 	
+	
 	public User findUserById(int id) {
 		return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), id);
 	}
@@ -36,9 +38,30 @@ public class UserRepository {
 			String lastName = rs.getString("lastName");
 			String contact = rs.getString("contact");
 			String email = rs.getString("email");
-			user = new User(userId, firstName, lastName, contact, email, Role.TRADER);
+			String address = rs.getString("address");
+			user = new User(userId, firstName, lastName, contact, email, Role.TRADER, address);
 			return user;
 		}
 		
 	}
+	
+	
+    public void insertUser(User usr) {
+        String sql = MessageFormat.format("INSERT INTO users(id,firstName,lastName,contact,email,role, address) values ({0},{1},{2},{3},{4},{5},{6})",
+        		usr.getUserId(),
+                "'" + usr.getFirstName() + "'",
+                "'" + usr.getLastName() + "'",
+                "'" + usr.getContact() + "'",
+                "'" + usr.getEmail() + "'",
+                "'" + usr.getRole() + "'",
+                "'" + usr.getAddress() + "'");
+
+        update(sql);
+    }
+    
+    public void update(String sql) {
+        jdbcTemplate.update(sql);
+    }
+    
+    
 }
