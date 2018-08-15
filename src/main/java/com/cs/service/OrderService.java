@@ -43,7 +43,6 @@ public class OrderService {
 		orderRepo.updateOrder(id, updateMap);;
 	}
 
-
 	public Order insertOrder(Order order) {
 		return orderRepo.insertOrder(order);
 	}
