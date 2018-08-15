@@ -3,6 +3,7 @@ package com.cs.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -114,15 +115,17 @@ public class OrderRepository {
     }
 
     public Order insertOrder(Order order) {
-    	String query = "INSERT into ORDERS values("
-    			+ order.getOrderId() +"," + order.getTrader().getId()+ ",'"
+    	String query = "INSERT into ORDERS (userid,tickersymbol,side,ordertype,price,noofshares,status,ordertimestamp) values("
+    			+ order.getTrader().getId()+ ",'"
     			+ order.getCompany().getTickerSymbol() + "','"
     			+ order.getSide() + "','" + order.getType() + "',"
-    			+ order.getNoOfShares() + "," + order.getPrice() + ",'"
+    			+ order.getPrice() + "," + order.getNoOfShares() + ",'"
     			+ order.getStatus() + "','" + order.getTimeStamp() +"')";
-    	
+    	System.out.println("****!!!!" + order.getTrader().getId());
     	jdbcTemplate.execute(query);
-    	return order;
+    	List<Order> orderList = findAllOrders();
+    	Order insertedOrder = orderList.get(orderList.size()-1);
+    	return insertedOrder;
     }
     class OrderRowMapper implements RowMapper<Order> {
         @Override

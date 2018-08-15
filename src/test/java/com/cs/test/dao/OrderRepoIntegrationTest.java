@@ -195,7 +195,6 @@ public class OrderRepoIntegrationTest {
     }
     
     @Test
-
     public void updateExistingOrderWithoutParameters() {
     	HashMap<String,Object> updateMap = null;
     	orderRepository.updateOrder(1, updateMap);;
@@ -208,33 +207,27 @@ public class OrderRepoIntegrationTest {
   //Story 1 Tests
   	@Test
   	public void insertBuyMarketOrder() {
-  		orderRepository.insertOrder();
+  		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		Industry industry = new Industry("Commodities Trading","Commodities Services");
+    	Company company = new Company("HIJ.HK","CS", industry);
+    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
+    	Order order = new Order(company,"B","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+  		Order insertedOrder = orderRepository.insertOrder(order);
+  		assertThat(insertedOrder,samePropertyValuesAs(order));
   	}
   	
   	@Test
-  	public void insertBuyLimitOrder() {
-  		orderRepository.insertOrder();
+  	public void insertInvalidBuyMarketOrder() {
+  		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		Industry industry = new Industry("Commodities Trading","Commodities Services");
+    	Company company = new Company("HIJ.HK","CS", industry);
+    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
+    	Order order = new Order(company,"B","MARKET",-1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+  		Order insertedOrder = orderRepository.insertOrder(order);
+  		assertThat(insertedOrder,samePropertyValuesAs(order));
   	}
   	
-  	@Test
-  	public void insertSellMarketOrder() {
-  		orderRepository.insertOrder();
-  	}
   	
-  	@Test
-  	public void insertSellLimitOrder() {
-  		orderRepository.insertOrder();
-  	}
-    
-
-	public void updateExistingOrderWithoutParameters() {
-		HashMap<String,Object> updateMap = null;
-		orderRepository.updateOrder(1, updateMap);;
-		Order order = orderRepository.findOrderById(1);
-		assertThat(order.getNoOfShares(), is(5));
-		assertThat(order.getPrice(), is(10.0));
-		assertThat(order.getType(), is("LIMIT"));
-	}
 
 	@Test
 	public void canGetTimeStampOfLastOrder() {

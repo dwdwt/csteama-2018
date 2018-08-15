@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cs.domain.Company;
 import com.cs.domain.Order;
 import com.cs.exception.InvalidActionException;
+import com.cs.exception.InvalidOrderException;
 import com.cs.exception.InvalidParameterException;
 import com.cs.service.CompanyService;
 import com.cs.service.OrderService;
@@ -235,17 +236,15 @@ public class OrderController {
 					produces=MediaType.APPLICATION_JSON_VALUE,consumes=MediaType.APPLICATION_JSON_VALUE)
 	public Order insertOrder(@RequestBody Order order){
 		try {
-			String query = "INSERT into ORDERS values("
-	    			+ order.getOrderId() +"," + order.getTrader().getId()+ ",'"
-	    			+ order.getCompany().getTickerSymbol() + "','"
-	    			+ order.getSide() + "','" + order.getType() + "',"
-	    			+ order.getNoOfShares() + "," + order.getPrice() + ",'"
-	    			+ order.getStatus() + "'," + order.getTimeStamp() +")";
-	    	System.out.println(query);
+			if(order.getNoOfShares() <= 0 || order.getPrice() <=0) {
+				throw new InvalidOrderException("Quantiy of price and shares must be positive.");
+			}
+			Company company = companySvc.findCompanyByTickerSymbol(order.getCompany().getTickerSymbol());
 			
-		}catch(InvalidActionException e) {
-			
+		}catch(EmptyResultDataAccessException e) {
+			throw new InvalidOrderException("Invalid company");
 		}
+		order.setStatus("OPENED");
 		return orderSvc.insertOrder(order);
 	}
 }
