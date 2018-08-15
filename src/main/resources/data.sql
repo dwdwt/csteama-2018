@@ -1,6 +1,6 @@
-insert into users(id,firstName,lastName,contact,email,role,address) values (1,'Jon','Doe','1234','jondoe@gmail.com','trader','smu');
-insert into users(id,firstName,lastName,contact,email,role,address) values (2,'Brandon','Tan','1234','jondoe@gmail.com','trader','smu');
-insert into users(id,firstName,lastName,contact,email,role,address) values (3,'Ys','Ngo','1234','jondoe@gmail.com','trader', 'smu');
+insert into users(id,firstName,lastName,contact,email,role,address) values (1,'Jon','Doe','1234','jondoe@gmail.com','TRADER','smu');
+insert into users(id,firstName,lastName,contact,email,role,address) values (2,'Brandon','Tan','1234','jondoe@gmail.com','QA','smu');
+insert into users(id,firstName,lastName,contact,email,role,address) values (3,'Ys','Ngo','1234','jondoe@gmail.com','TRADER', 'smu');
 
 insert into industries(name,description) values ('IT Services', 'Services');
 insert into industries(name,description) values ('Software & Services', 'Services');

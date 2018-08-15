@@ -23,10 +23,24 @@ public class UserService {
 	}
 	
 	
-	public User getUser(int id){
+	public User getUserById(int id){
 		return userRepo.findUserById(id);
+	}
+
+	public List<User> getAllUsers(){
+		return userRepo.findAllUsers();
 	}
 	
 
+
+	public void addUser(User user) {
+		userRepo.insertUser(user);
+		return;
+	}
+
+	public void removeUser(int id) {
+		userRepo.deleteUserById(id);
+		return;
+	}
 
 }

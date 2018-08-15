@@ -27,7 +27,12 @@ public class UserRepository {
 	public User findUserById(int id) {
 		return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), id);
 	}
-	
+
+	public void deleteUserById(int id) {
+		String sql = MessageFormat.format("DELETE from users where id = {0}", id);
+		update(sql);
+	}
+
 	class UserRowMapper implements RowMapper<User> {
 
 		@Override
@@ -39,7 +44,8 @@ public class UserRepository {
 			String contact = rs.getString("contact");
 			String email = rs.getString("email");
 			String address = rs.getString("address");
-			user = new User(userId, firstName, lastName, contact, email, Role.TRADER, address);
+			Role role = Role.valueOf(rs.getString("role"));
+			user = new User(userId, firstName, lastName, contact, email, role, address);
 			return user;
 		}
 		
@@ -47,8 +53,7 @@ public class UserRepository {
 	
 	
     public void insertUser(User usr) {
-        String sql = MessageFormat.format("INSERT INTO users(id,firstName,lastName,contact,email,role, address) values ({0},{1},{2},{3},{4},{5},{6})",
-        		usr.getUserId(),
+        String sql = MessageFormat.format("INSERT INTO users(firstName,lastName,contact,email,role, address) values ({0},{1},{2},{3},{4},{5})",
                 "'" + usr.getFirstName() + "'",
                 "'" + usr.getLastName() + "'",
                 "'" + usr.getContact() + "'",
