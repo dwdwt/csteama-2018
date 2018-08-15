@@ -1,6 +1,7 @@
 package com.cs.controller;
 
 import com.cs.domain.Order;
+import com.cs.exception.InvalidParameterException;
 import com.cs.service.OrderService;
 import com.cs.service.TransactionService;
 import com.cs.view.TransactionView;
@@ -22,13 +23,14 @@ public class TransactionController {
 	TransactionService transactionService;
 
 	@RequestMapping("/transactions")
-	public List<TransactionView> findOrdersWithFilterAndSortingCriteria(
+	public ResponseEntity<List<TransactionView>> findOrdersWithFilterAndSortingCriteria(
 			@RequestParam(value="userId",required=false)String userId,
 			@RequestParam(value="stockSymbol",required=false)String stockSymbol,
 			@RequestParam(value="fromDate",required=false)String fromDate,
 			@RequestParam(value="toDate",required=false)String toDate,
             @RequestParam(value="filter",required=false)String filterItemsString) {
-            return transactionService.getAllTransactionViewsByCriteria(userId, stockSymbol, fromDate, toDate, filterItemsString);
+            return new ResponseEntity<>(transactionService.getAllTransactionViewsByCriteria(userId, stockSymbol, fromDate, toDate, filterItemsString),HttpStatus.OK) ;
+
 	}
 	
 }

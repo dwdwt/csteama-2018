@@ -2,6 +2,7 @@ package com.cs.view;
 
 import com.cs.domain.Order;
 import com.cs.domain.Transaction;
+import com.cs.exception.InvalidParameterException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -62,7 +63,7 @@ public class TransactionView {
                     break;
 
                 default:
-                    throw new IllegalArgumentException();
+                    throw new InvalidParameterException("No Such Filter: " + selectedItem);
             }
         }
     }
