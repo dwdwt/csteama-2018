@@ -23,14 +23,28 @@ public class UserService {
 	}
 	
 	
-	public User getUser(int id){
+	public User getUserById(int id){
 		return userRepo.findUserById(id);
+	}
+
+	public List<User> getAllUsers(){
+		return userRepo.findAllUsers();
 	}
 	
 	
 	public void addUsers(int uid, String firstName, String lastName, String contact, String email, String address) {
 		User ur = new User(uid, firstName, lastName, contact, email, Role.TRADER, address);
 		userRepo.insertUser(ur);
+		return;
+	}
+
+	public void addUser(User user) {
+		userRepo.insertUser(user);
+		return;
+	}
+
+	public void removeUser(int id) {
+		userRepo.deleteUserById(id);
 		return;
 	}
 

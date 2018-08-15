@@ -20,7 +20,7 @@ public class TransactionView {
 
     public TransactionView(Transaction txn, Order order){
         this.txnId = txn.getId();
-        this.userId = order.getTrader().getUserId();
+        this.userId = order.getTrader().getId();
         this.operation = txn.getOperation().toString();
         this.timeStamp = txn.getTxnTimeStamp().toString();
         this.stockSymbol = order.getCompany().getTickerSymbol();
@@ -36,7 +36,7 @@ public class TransactionView {
                     this.txnId = txn.getId();
                     break;
                 case "userId":
-                    this.userId = order.getTrader().getUserId();
+                    this.userId = order.getTrader().getId();
                     break;
                 case "operation":
                     this.operation = txn.getOperation().toString();

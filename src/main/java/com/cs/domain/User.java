@@ -1,7 +1,9 @@
 package com.cs.domain;
 
+import org.assertj.core.util.VisibleForTesting;
+
 public class User {
-	private int userId;
+	private int id;
 	private String firstName;
 	private String lastName;
 	private String contact;
@@ -15,11 +17,11 @@ public class User {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	public int getUserId() {
-		return userId;
+	public int getId() {
+		return id;
 	}
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setId(int id) {
+		this.id = id;
 	}
 	public String getFirstName() {
 		return firstName;
@@ -52,10 +54,11 @@ public class User {
 		this.role = role;
 	}
 
-	public User(int userId, String firstName, String lastName, String contact, String email, Role role,
-			String address) {
+	@VisibleForTesting
+	public User(int id, String firstName, String lastName, String contact, String email, Role role,
+				String address) {
 		super();
-		this.userId = userId;
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.contact = contact;
@@ -81,7 +84,7 @@ public class User {
 	@Override
 	public boolean equals(Object o) {
 		User another = (User) o;
-		return another.userId == this.userId;
+		return another.id == this.id;
 	}
 	
 }
