@@ -4,10 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,41 +23,34 @@ import com.cs.domain.Order;
 import com.cs.domain.Role;
 import com.cs.domain.User;
 
-import io.restassured.RestAssured;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Csteama2018Application.class})
 public class OrderRepoIntegrationTest {
 
     @Autowired
     OrderRepository orderRepository;
-    
-    
-    
-    
+
+    //Story 4 Tests
     @Test
     public void canFindAllOrders() {
     	assertThat(orderRepository.findAllOrders().size(), is(8));
     }
 
- 
-    
-    
     @Test
     public void canFindByOrderId() {
-    	DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+    	DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
     	Industry industry = new Industry("IT Services","Services");
-    	Company company = new Company("ABC.HK","ABC CO HONG KONG", industry);
+    	Company company = new Company("ABC.HK","CS", industry);
     	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER);
-    	assertThat(orderRepository.findOrderById(1), samePropertyValuesAs(new Order(1,company,"B","LIMIT",10.0,5,formatter.parseDateTime("16/08/2018 10:17:23"),user,"OPENED")));
+    	assertThat(orderRepository.findOrderById(1), samePropertyValuesAs(new Order(1,company,"B","LIMIT",10.0,5,formatter.parseDateTime("2018-08-16 10:17:23"),user,"OPENED")));
     }
-    
-    //TODO
-    @Test
-    public void listOrdersGroupByOrderSideOrderTypeOrderStatus() {
-    	
+//
+//    //TODO
+//    @Test
+//    public void listOrdersGroupByOrderSideOrderTypeOrderStatus() {
+//
 //    	assertThat(orderRepository.filterAndSortOrdersByCriteria());
-    }
+//    }
    
     @Test
     public void listOrdersBasedOnBuy() {

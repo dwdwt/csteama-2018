@@ -32,4 +32,9 @@ public class Company {
 		super();
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		Company another = (Company) o;
+		return another.tickerSymbol.equals(this.tickerSymbol);
+	}
 }
