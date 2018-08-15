@@ -2,6 +2,7 @@ package com.cs.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -137,17 +138,16 @@ public class OrderRepository {
     }
     
     //retrive last order by userId
-    public String findlastOrder(int userId) {
+    public DateTime findLastOrderTimestamp(int userId) {
     	String query = "SELECT MAX(orderTimeStamp) FROM orders WHERE userId = ?";
-    	return jdbcTemplate.queryForObject(query, new Object[] { userId }, String.class);
+    	return new DateTime(jdbcTemplate.queryForObject(query, new Object[] { userId }, Timestamp.class));
     }
    
    //retrive total number or orders in system 
-    public int countOrderByStatus (int userId, String status) {
-    	String query = "SELECT Count(*) FROM orders WHERE";
-    	query += "userId = " + userId + "And status = " + status;
+    public int getOrderCountByStatus(int userId, String status) {
+    	String query = " SELECT Count(*) FROM orders WHERE ";
+    	query += " userId = " + userId + " And status = '" + status + "'";
     	return jdbcTemplate.queryForObject(query, Integer.class);
-    	
     }
     
 }

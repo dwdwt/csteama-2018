@@ -3,6 +3,7 @@ package com.cs.service;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,13 +42,13 @@ public class OrderService {
 	}
 	
 	//find last time order by userId
-	public String getLastOrder(int uid) {
-		return orderRepo.findlastOrder(uid);
+	public DateTime getLastOrderTimestamp(int uid) {
+		return orderRepo.findLastOrderTimestamp(uid);
 	}
 	
 	//find total order by status
 	public int getTotalOrdersBystatus(int uid, String status) {
-		return orderRepo.countOrderByStatus(uid, status);
+		return orderRepo.getOrderCountByStatus(uid, status);
 	}
 	
 }
