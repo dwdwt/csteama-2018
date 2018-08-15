@@ -2,6 +2,7 @@ package com.cs.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +113,17 @@ public class OrderRepository {
     	}
     }
 
-//    public boolean placeNewOrder(Order order)
+    public Order insertOrder(Order order) {
+    	String query = "INSERT into ORDERS values("
+    			+ order.getOrderId() +"," + order.getTrader().getId()+ ",'"
+    			+ order.getCompany().getTickerSymbol() + "','"
+    			+ order.getSide() + "','" + order.getType() + "',"
+    			+ order.getNoOfShares() + "," + order.getPrice() + ",'"
+    			+ order.getStatus() + "','" + order.getTimeStamp() +"')";
+    	
+    	jdbcTemplate.execute(query);
+    	return order;
+    }
     class OrderRowMapper implements RowMapper<Order> {
         @Override
         public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -136,5 +147,17 @@ public class OrderRepository {
     	return jdbcTemplate.query("SELECT * FROM orders WHERE userId = ?", new OrderRowMapper(), userId);
     }
     
+    //retrive last order by userId
+    public DateTime findLastOrderTimestamp(int userId) {
+    	String query = "SELECT MAX(orderTimeStamp) FROM orders WHERE userId = ?";
+    	return new DateTime(jdbcTemplate.queryForObject(query, new Object[] { userId }, Timestamp.class));
+    }
+   
+   //retrive total number or orders in system 
+    public int getOrderCountByStatus(int userId, String status) {
+    	String query = " SELECT Count(*) FROM orders WHERE ";
+    	query += " userId = " + userId + " And status = '" + status + "'";
+    	return jdbcTemplate.queryForObject(query, Integer.class);
+    }
     
 }

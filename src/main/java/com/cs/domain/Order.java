@@ -98,6 +98,20 @@ public class Order {
         this.trader = trader;
         this.status = status;
     }
+    
+    public Order(int orderId, Company company, String side, String type, double price, int noOfShares,
+            DateTime timeStamp, User trader) {
+	   super();
+	   this.orderId = orderId;
+	   this.company = company;
+	   this.side = side;
+	   this.type = type;
+	   this.price = price;
+	   this.noOfShares = noOfShares;
+	   this.timeStamp = timeStamp;
+	   this.trader = trader;
+	   this.status = "OPENED";
+	}
 
     public Order() {
         super();

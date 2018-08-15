@@ -194,13 +194,59 @@ public class OrderRepoIntegrationTest {
     	assertThat(order.getType(), is("LIMIT"));
     }
     
-    @Test
-    public void updateExistingOrderWithoutParameters() {
-    	HashMap<String,Object> updateMap = null;
-    	orderRepository.updateOrder(1, updateMap);;
-    	Order order = orderRepository.findOrderById(1);
-    	assertThat(order.getNoOfShares(), is(5));
-    	assertThat(order.getPrice(), is(10.0));
-    	assertThat(order.getType(), is("LIMIT"));
-    }
+//    @Test
+//
+//    public void updateExistingOrderWithoutParameters() {
+//    	HashMap<String,Object> updateMap = null;
+//    	orderRepository.updateOrder(1, updateMap);;
+//    	Order order = orderRepository.findOrderById(1);
+//    	assertThat(order.getNoOfShares(), is(5));
+//    	assertThat(order.getPrice(), is(10.0));
+//    	assertThat(order.getType(), is("LIMIT"));
+//    }
+//
+//  //Story 1 Tests
+//  	@Test
+//  	public void insertBuyMarketOrder() {
+//  		orderRepository.insertOrder();
+//  	}
+//
+//  	@Test
+//  	public void insertBuyLimitOrder() {
+//  		orderRepository.insertOrder();
+//  	}
+//
+//  	@Test
+//  	public void insertSellMarketOrder() {
+//  		orderRepository.insertOrder();
+//  	}
+//
+//  	@Test
+//  	public void insertSellLimitOrder() {
+//  		orderRepository.insertOrder();
+//  	}
+//
+
+	public void updateExistingOrderWithoutParameters() {
+		HashMap<String,Object> updateMap = null;
+		orderRepository.updateOrder(1, updateMap);;
+		Order order = orderRepository.findOrderById(1);
+		assertThat(order.getNoOfShares(), is(5));
+		assertThat(order.getPrice(), is(10.0));
+		assertThat(order.getType(), is("LIMIT"));
+	}
+
+	@Test
+	public void canGetTimeStampOfLastOrder() {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		assertThat(orderRepository.findLastOrderTimestamp(3), is(formatter.parseDateTime(("2018-08-16 10:57:23"))));
+	}
+
+
+	@Test
+	public void canGetTotalNumberOfOrdersByStatus() {
+		assertThat(orderRepository.getOrderCountByStatus(3,"OPENED"), is(1));
+		assertThat(orderRepository.getOrderCountByStatus(3,"CANCELLED"), is(2));
+		assertThat(orderRepository.getOrderCountByStatus(2,"FILLED"), is(1));
+	}
 }
