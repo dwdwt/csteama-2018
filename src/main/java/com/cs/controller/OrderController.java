@@ -79,22 +79,32 @@ public class OrderController {
 			}
 		}
 		
-		if(!fromOrderQty.isEmpty()) {
+		if(!fromOrderQty.isEmpty() && !toOrderQty.isEmpty()) {
+			int fromQty = -1;
+			int toQty = -1;
 			try {
-				Integer.parseInt(fromOrderQty);
-				criteriaMap.put("fromOrderQty",fromOrderQty);
+				fromQty = Integer.parseInt(fromOrderQty);
+				
 			} catch (NumberFormatException e) {
 				throw new InvalidParameterException("Invalid from order quantity. Input only integers.");
 			}
-		}
-		
-		if(!toOrderQty.isEmpty()) {
+			
 			try {
-				Integer.parseInt(toOrderQty);
-				criteriaMap.put("fromOrderQty",toOrderQty);
+				toQty = Integer.parseInt(toOrderQty);
 			} catch (NumberFormatException e) {
 				throw new InvalidParameterException("Invalid to order quantity. Input only integers.");
 			}
+			
+			if(fromQty >= 0 && toQty >= 0) {
+				if(toQty < fromQty) {
+					throw new InvalidParameterException("To order quantity cannot be smaller than From order quantity.");
+				}else {
+					criteriaMap.put("fromOrderQty",fromOrderQty);
+					criteriaMap.put("toOrderQty",toOrderQty);
+				}
+			}
+		}else if (!fromOrderQty.isEmpty() || !toOrderQty.isEmpty()){
+			throw new InvalidParameterException("Invalid order quantity parameters. Both from and to order quantities must be provided.");
 		}
 		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -102,7 +112,6 @@ public class OrderController {
 		if(!fromTimestamp.isEmpty()) {
 			try {
 				from = formatter.parseDateTime(fromTimestamp);
-				criteriaMap.put("fromTimestamp",fromTimestamp);
 			} catch(IllegalArgumentException e) {
 				throw new InvalidParameterException("Invalid from timestamp. Input timestamp in yyyy-MM-dd HH:mm:ss format only.");
 			}
@@ -112,7 +121,6 @@ public class OrderController {
 		if(!toTimestamp.isEmpty()) {
 			try {
 				to = formatter.parseDateTime(toTimestamp);
-				criteriaMap.put("toTimestamp",toTimestamp);
 			} catch(IllegalArgumentException e) {
 				throw new InvalidParameterException("Invalid to timestamp. Input timestamp in yyyy-MM-dd HH:mm:ss format only.");
 			}
@@ -121,7 +129,24 @@ public class OrderController {
 		if(to != null && from != null) {
 			if(to.isBefore(from)) {
 				throw new InvalidParameterException("To timestamp cannot be before From timestamp.");
+			}else {
+				criteriaMap.put("fromTimestamp",fromTimestamp);
+				criteriaMap.put("toTimestamp",toTimestamp);
 			}
+		}else if (to != null || from != null) {
+			throw new InvalidParameterException("Invalid timestamp parameters. Both from and to timestamps must be provided.");
+		}
+		
+		if(!sortParams.isEmpty() && !sortSequence.isEmpty()) {
+			if(!sortParams.contains("tickerSymbol") && !sortParams.contains("price")) {
+				throw new InvalidParameterException("Sorting parameters only include tickerSymbol and price.");
+			}
+			
+			if(!sortSequence.contains("asc") && !sortSequence.contains("desc")) {
+				throw new InvalidParameterException("Sorting sequence only allows asc and desc.");
+			}
+		}else if (!sortParams.isEmpty() || !sortSequence.isEmpty()) {
+			throw new InvalidParameterException("Invalid sorting parameters. Both sort and sortSeq must be provided.");
 		}
 		
 		return orderSvc.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
