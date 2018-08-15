@@ -106,7 +106,7 @@ public class TransactionControllerIntegrationTest {
         given().
                 accept(MediaType.APPLICATION_JSON_VALUE).when().get("/transactions?userId=2&stockSymbol=DEF.HK&filter=txnId,rubbish").
                 then().
-                statusCode(SC_BAD_REQUEST).body("message", equalTo("No Such Filter"));
+                statusCode(SC_BAD_REQUEST).body("message", equalTo("No Such Filter: rubbish"));
     }
 
 }

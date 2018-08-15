@@ -29,11 +29,7 @@ public class TransactionController {
 			@RequestParam(value="fromDate",required=false)String fromDate,
 			@RequestParam(value="toDate",required=false)String toDate,
             @RequestParam(value="filter",required=false)String filterItemsString) {
-	    try {
             return new ResponseEntity<>(transactionService.getAllTransactionViewsByCriteria(userId, stockSymbol, fromDate, toDate, filterItemsString),HttpStatus.OK) ;
-        }catch (IllegalArgumentException ex){
-			throw new InvalidParameterException("No Such Filter");
-        }
 
 	}
 	
