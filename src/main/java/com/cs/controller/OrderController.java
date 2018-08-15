@@ -142,7 +142,7 @@ public class OrderController {
 				throw new InvalidParameterException("Sorting parameters only include tickerSymbol and price.");
 			}
 			
-			if(!sortSequence.contains("asc") && !sortSequence.contains("desc")) {
+			if(!sortSequence.equals("asc") && !sortSequence.equals("desc")) {
 				throw new InvalidParameterException("Sorting sequence only allows asc and desc.");
 			}
 		}else if (!sortParams.isEmpty() || !sortSequence.isEmpty()) {
