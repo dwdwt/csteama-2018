@@ -132,5 +132,18 @@ public class OrderRepository {
     	return jdbcTemplate.query("SELECT * FROM orders WHERE userId = ?", new OrderRowMapper(), userId);
     }
     
+    //retrive last order by userId
+    public String findlastOrder(int userId) {
+    	String query = "SELECT MAX(orderTimeStamp) FROM orders WHERE userId = ?";
+    	return jdbcTemplate.queryForObject(query, new Object[] { userId }, String.class);
+    }
+   
+   //retrive total number or orders in system 
+    public int countOrderByStatus (int userId, String status) {
+    	String query = "SELECT Count(*) FROM orders WHERE";
+    	query += "userId = " + userId + "And status = " + status;
+    	return jdbcTemplate.queryForObject(query, Integer.class);
+    	
+    }
     
 }

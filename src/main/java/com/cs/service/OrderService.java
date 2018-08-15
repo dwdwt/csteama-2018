@@ -39,4 +39,15 @@ public class OrderService {
 	public List<Order> getOrdersByUserId(int uid){
 		return orderRepo.findOrdersByUserId(uid);
 	}
+	
+	//find last time order by userId
+	public String getLastOrder(int uid) {
+		return orderRepo.findlastOrder(uid);
+	}
+	
+	//find total order by status
+	public int getTotalOrdersBystatus(int uid, String status) {
+		return orderRepo.countOrderByStatus(uid, status);
+	}
+	
 }
