@@ -41,7 +41,7 @@ public class OrderRepoIntegrationTest {
     	DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
     	Industry industry = new Industry("IT Services","Services");
     	Company company = new Company("ABC.HK","CS", industry);
-    	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER);
+    	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	assertThat(orderRepository.findOrderById(1), samePropertyValuesAs(new Order(1,company,"B","LIMIT",10.0,5,formatter.parseDateTime("2018-08-16 10:17:23"),user,"OPENED")));
     }
 //
