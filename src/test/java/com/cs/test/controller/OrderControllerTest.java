@@ -10,6 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.Csteama2018Application;
 import com.cs.domain.Order;
+import com.cs.exception.InvalidActionException;
+import com.cs.exception.InvalidParameterException;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -33,10 +35,10 @@ public class OrderControllerTest {
 	}
 	
 	//Story 2 Tests
-	 @Test
-	 public void cancelOpenOrder() {
+	@Test
+	public void cancelOpenOrder() {
     	Response response =
-		 when().
+		when().
     		get("/cancel/{orderId}",1).
     	then().
     		statusCode(200).
@@ -45,6 +47,38 @@ public class OrderControllerTest {
     	String cancelledOrder = jsonResponse.get(jsonResponse.size()-1);
     	assertThat(cancelledOrder, is("CANCELLED"));
 	 }
+	
+	@Test
+	public void cancelFilledOrder() {
+    	try {
+    		when().
+    			get("/cancel/{orderId}",2);
+    	}catch(InvalidActionException e) {
+    		assertThat(e.getMessage(), is("Order 2 has been filled or cancelled. Unable to cancel order."));
+    	}
+    }
+	 
+	@Test
+	public void cancelInvalidOrder() {
+		try {
+			when().
+				get("/cancel/{orderId}",100);
+		}catch(InvalidParameterException e) {
+			assertThat(e.getMessage(), is("Invalid order id."));
+		}
+		
+	}
+	
+	@Test
+	public void cancelCancelledOrder() {
+		try {
+			when().
+				get("/cancel/{orderId}",3);
+		}catch(InvalidActionException e) {
+			assertThat(e.getMessage(), is("Order 3 has been filled or cancelled. Unable to cancel order."));
+		}
+		
+	}
 	
 	
 	

@@ -59,10 +59,10 @@ public class OrderController {
 		try {
 			Order order = orderSvc.findOrderById(orderId);
 			
-			if(!order.getStatus().equals("FILLED")) {
+			if(!order.getStatus().matches("FILLED|CANCELLED")) {
 				orderSvc.cancelOrder(orderId);
 			} else {
-				throw new InvalidActionException("Order " + orderId + " has been filled. Unable to cancel order.");
+				throw new InvalidActionException("Order " + orderId + " has been filled or cancelled. Unable to cancel order.");
 			}
 		} catch (EmptyResultDataAccessException e) {
 			throw new InvalidParameterException("Invalid order id.");
