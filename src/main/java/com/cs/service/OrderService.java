@@ -36,11 +36,11 @@ public class OrderService {
 		orderRepo.updateOrder(id, updateMap);;
 	}
 	
-<<<<<<< HEAD
+
 	public Order insertOrder(Order order) {
 		return orderRepo.insertOrder(order);
 	}
-=======
+
 	//find orders by user Id
 	public List<Order> getOrdersByUserId(int uid){
 		return orderRepo.findOrdersByUserId(uid);
@@ -55,6 +55,5 @@ public class OrderService {
 	public int getTotalOrdersBystatus(int uid, String status) {
 		return orderRepo.getOrderCountByStatus(uid, status);
 	}
-	
->>>>>>> c6cfaf942002a0899a32f19d343f65c3dc602370
+
 }
