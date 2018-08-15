@@ -102,11 +102,11 @@ public class TransactionControllerIntegrationTest {
 
     //TODO not passing yet
     @Test
-    public void withHaveServerErrorWhenArgumentIsNotGood() {
+    public void willHaveServerErrorWhenArgumentIsNotGood() {
         given().
                 accept(MediaType.APPLICATION_JSON_VALUE).when().get("/transactions?userId=2&stockSymbol=DEF.HK&filter=txnId,rubbish").
                 then().
-                statusCode(SC_BAD_REQUEST).body("error", equalTo("No Such Filter"));
+                statusCode(SC_BAD_REQUEST).body("message", equalTo("No Such Filter"));
     }
 
 }
