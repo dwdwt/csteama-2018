@@ -4,10 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 
-import org.joda.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,26 +28,26 @@ public class OrderRepoIntegrationTest {
 
     @Autowired
     OrderRepository orderRepository;
- 
+
     //Story 4 Tests
     @Test
     public void canFindAllOrders() {
     	assertThat(orderRepository.findAllOrders().size(), is(8));
     }
-    
+
     @Test
     public void canFindByOrderId() {
     	DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
     	Industry industry = new Industry("IT Services","Services");
     	Company company = new Company("ABC.HK","CS", industry);
-    	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER);
+    	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	assertThat(orderRepository.findOrderById(1), samePropertyValuesAs(new Order(1,company,"B","LIMIT",10.0,5,formatter.parseDateTime("2018-08-16 10:17:23"),user,"OPENED")));
     }
-//    
+    
 //    //TODO
 //    @Test
 //    public void listOrdersGroupByOrderSideOrderTypeOrderStatus() {
-//    	
+//
 //    	assertThat(orderRepository.filterAndSortOrdersByCriteria());
 //    }
    
@@ -195,6 +195,7 @@ public class OrderRepoIntegrationTest {
     }
     
     @Test
+
     public void updateExistingOrderWithoutParameters() {
     	HashMap<String,Object> updateMap = null;
     	orderRepository.updateOrder(1, updateMap);;
@@ -226,4 +227,26 @@ public class OrderRepoIntegrationTest {
   	}
     
 
+	public void updateExistingOrderWithoutParameters() {
+		HashMap<String,Object> updateMap = null;
+		orderRepository.updateOrder(1, updateMap);;
+		Order order = orderRepository.findOrderById(1);
+		assertThat(order.getNoOfShares(), is(5));
+		assertThat(order.getPrice(), is(10.0));
+		assertThat(order.getType(), is("LIMIT"));
+	}
+
+	@Test
+	public void canGetTimeStampOfLastOrder() {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		assertThat(orderRepository.findLastOrderTimestamp(3), is(formatter.parseDateTime(("2018-08-16 10:57:23"))));
+	}
+
+
+	@Test
+	public void canGetTotalNumberOfOrdersByStatus() {
+		assertThat(orderRepository.getOrderCountByStatus(3,"OPENED"), is(1));
+		assertThat(orderRepository.getOrderCountByStatus(3,"CANCELLED"), is(2));
+		assertThat(orderRepository.getOrderCountByStatus(2,"FILLED"), is(1));
+	}
 }

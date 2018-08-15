@@ -2,6 +2,7 @@ package com.cs.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
 
 
@@ -43,7 +45,7 @@ public class OrderRepository {
 			query += " WHERE ";
 			
 			// Filter Qty
-        	try {
+			try {
         		int fromOrderQty = Integer.parseInt(criteriaMap.get("fromOrderQty"));
         		int toOrderQty = Integer.parseInt(criteriaMap.get("toOrderQty"));
         		query += ("(noOfShares BETWEEN " + fromOrderQty + " AND " + toOrderQty + ") AND ");
@@ -72,7 +74,6 @@ public class OrderRepository {
     		query = query.substring(0, query.length()-5);
 		}
 
-    	 
     	if (!sortParams.isEmpty()) {
     		query += " ORDER BY " + sortParams + " " + sortSequence;
     	}
@@ -80,6 +81,11 @@ public class OrderRepository {
 		return jdbcTemplate.query(query, new OrderRowMapper());
     	
     }
+
+    public boolean userHasAnyOrder(int userId){
+		List<Order> orders =  jdbcTemplate.query("SELECT * FROM orders WHERE userid = ?", new OrderRowMapper(), userId);
+		return !orders.isEmpty();
+	}
 
     public void cancelOrder(int id) {
     	jdbcTemplate.update("UPDATE orders SET status = 'CANCELLED' where id = ?", id);
@@ -109,7 +115,7 @@ public class OrderRepository {
 
     public Order insertOrder(Order order) {
     	String query = "INSERT into ORDERS values("
-    			+ order.getOrderId() +"," + order.getTrader().getUserId()+ ",'"
+    			+ order.getOrderId() +"," + order.getTrader().getId()+ ",'"
     			+ order.getCompany().getTickerSymbol() + "','"
     			+ order.getSide() + "','" + order.getType() + "',"
     			+ order.getNoOfShares() + "," + order.getPrice() + ",'"
@@ -134,4 +140,24 @@ public class OrderRepository {
             return order;
         }
     }
+
+
+    //find order by userId
+    public List<Order> findOrdersByUserId(int userId){
+    	return jdbcTemplate.query("SELECT * FROM orders WHERE userId = ?", new OrderRowMapper(), userId);
+    }
+    
+    //retrive last order by userId
+    public DateTime findLastOrderTimestamp(int userId) {
+    	String query = "SELECT MAX(orderTimeStamp) FROM orders WHERE userId = ?";
+    	return new DateTime(jdbcTemplate.queryForObject(query, new Object[] { userId }, Timestamp.class));
+    }
+   
+   //retrive total number or orders in system 
+    public int getOrderCountByStatus(int userId, String status) {
+    	String query = " SELECT Count(*) FROM orders WHERE ";
+    	query += " userId = " + userId + " And status = '" + status + "'";
+    	return jdbcTemplate.queryForObject(query, Integer.class);
+    }
+    
 }
