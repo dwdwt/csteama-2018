@@ -157,16 +157,25 @@ public class OrderController {
 		try {
 			Order order = orderSvc.findOrderById(orderId);
 			
-			if(!order.getStatus().equals("FILLED")) {
+			if(!order.getStatus().matches("FILLED|CANCELLED")) {
 				orderSvc.cancelOrder(orderId);
 			} else {
-				throw new InvalidActionException("Order " + orderId + " has been filled. Unable to cancel order.");
+				throw new InvalidActionException("Order " + orderId + " has been filled or cancelled. Unable to cancel order.");
 			}
 		} catch (EmptyResultDataAccessException e) {
 			throw new InvalidParameterException("Invalid order id.");
 		}
 		return orderSvc.findAllOrders();
 	}
+	
+	
+	//find orders by userid
+	@RequestMapping("/orders/{userId}")
+	public List<Order> findOrdersByUserId(@PathVariable("userId")int uid) {
+		return orderSvc.getOrdersByUserId(uid);
+	}
+	
+	
 	
 	@RequestMapping("/update/{orderId}")
 	public List<Order> updateOrder(@PathVariable("orderId")int orderId,

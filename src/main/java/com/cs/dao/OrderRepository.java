@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
 
 
@@ -80,6 +81,11 @@ public class OrderRepository {
     	
     }
 
+    public boolean userHasAnyOrder(int userId){
+		List<Order> orders =  jdbcTemplate.query("SELECT * FROM orders WHERE userid = ?", new OrderRowMapper(), userId);
+		return !orders.isEmpty();
+	}
+
     public void cancelOrder(int id) {
     	jdbcTemplate.update("UPDATE orders SET status = 'CANCELLED' where id = ?", id);
     }
@@ -123,4 +129,12 @@ public class OrderRepository {
             return order;
         }
     }
+
+
+    //find order by userId
+    public List<Order> findOrdersByUserId(int userId){
+    	return jdbcTemplate.query("SELECT * FROM orders WHERE userId = ?", new OrderRowMapper(), userId);
+    }
+    
+    
 }

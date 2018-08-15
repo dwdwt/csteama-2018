@@ -16,6 +16,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.Csteama2018Application;
+import com.cs.exception.InvalidActionException;
+import com.cs.exception.InvalidParameterException;
 
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
@@ -33,12 +35,50 @@ public class OrderControllerTest {
 	}
 
 	// Story 2 Tests
+	
 	@Test
 	public void cancelOpenOrder() {
-		Response response = when().get("/cancel/{orderId}", 1).then().statusCode(200).and().extract().response();
-		List<String> jsonResponse = response.jsonPath().getList("status");
-		String cancelledOrder = jsonResponse.get(jsonResponse.size() - 1);
-		assertThat(cancelledOrder, is("CANCELLED"));
+    	Response response =
+		when().
+    		get("/cancel/{orderId}",1).
+    	then().
+    		statusCode(200).
+    	and().extract().response();
+    	List<String> jsonResponse = response.jsonPath().getList("status");
+    	String cancelledOrder = jsonResponse.get(jsonResponse.size()-1);
+    	assertThat(cancelledOrder, is("CANCELLED"));
+	 }
+	
+	@Test
+	public void cancelFilledOrder() {
+    	try {
+    		when().
+    			get("/cancel/{orderId}",2);
+    	}catch(InvalidActionException e) {
+    		assertThat(e.getMessage(), is("Order 2 has been filled or cancelled. Unable to cancel order."));
+    	}
+    }
+	 
+	@Test
+	public void cancelInvalidOrder() {
+		try {
+			when().
+				get("/cancel/{orderId}",100);
+		}catch(InvalidParameterException e) {
+			assertThat(e.getMessage(), is("Invalid order id."));
+		}
+		
+	}
+	
+	@Test
+	public void cancelCancelledOrder() {
+		try {
+			when().
+				get("/cancel/{orderId}",3);
+		}catch(InvalidActionException e) {
+			assertThat(e.getMessage(), is("Order 3 has been filled or cancelled. Unable to cancel order."));
+		}
+		
 	}
 
 	// Story 3 Tests
@@ -345,4 +385,5 @@ public class OrderControllerTest {
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Invalid sorting parameters. Both sort and sortSeq must be provided."));
 	}
+	
 }

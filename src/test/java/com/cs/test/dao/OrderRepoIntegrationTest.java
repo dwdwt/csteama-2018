@@ -4,10 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 
-import org.joda.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,26 +28,26 @@ public class OrderRepoIntegrationTest {
 
     @Autowired
     OrderRepository orderRepository;
- 
+
     //Story 4 Tests
     @Test
     public void canFindAllOrders() {
     	assertThat(orderRepository.findAllOrders().size(), is(8));
     }
-    
+
     @Test
     public void canFindByOrderId() {
     	DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
     	Industry industry = new Industry("IT Services","Services");
     	Company company = new Company("ABC.HK","CS", industry);
-    	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER);
+    	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	assertThat(orderRepository.findOrderById(1), samePropertyValuesAs(new Order(1,company,"B","LIMIT",10.0,5,formatter.parseDateTime("2018-08-16 10:17:23"),user,"OPENED")));
     }
     
 //    //TODO
 //    @Test
 //    public void listOrdersGroupByOrderSideOrderTypeOrderStatus() {
-//    	
+//
 //    	assertThat(orderRepository.filterAndSortOrdersByCriteria());
 //    }
    
@@ -203,5 +203,4 @@ public class OrderRepoIntegrationTest {
     	assertThat(order.getPrice(), is(10.0));
     	assertThat(order.getType(), is("LIMIT"));
     }
-    
 }
