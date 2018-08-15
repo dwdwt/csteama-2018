@@ -100,7 +100,6 @@ public class TransactionControllerIntegrationTest {
                 "[2]", equalTo(null));
     }
 
-    //TODO not passing yet
     @Test
     public void willHaveServerErrorWhenArgumentIsNotGood() {
         given().

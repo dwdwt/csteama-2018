@@ -44,7 +44,7 @@ public class OrderRepository {
 			query += " WHERE ";
 			
 			// Filter Qty
-        	try {
+			try {
         		int fromOrderQty = Integer.parseInt(criteriaMap.get("fromOrderQty"));
         		int toOrderQty = Integer.parseInt(criteriaMap.get("toOrderQty"));
         		query += ("(noOfShares BETWEEN " + fromOrderQty + " AND " + toOrderQty + ") AND ");
@@ -73,7 +73,6 @@ public class OrderRepository {
     		query = query.substring(0, query.length()-5);
 		}
 
-    	 
     	if (!sortParams.isEmpty()) {
     		query += " ORDER BY " + sortParams + " " + sortSequence;
     	}
@@ -81,6 +80,11 @@ public class OrderRepository {
 		return jdbcTemplate.query(query, new OrderRowMapper());
     	
     }
+
+    public boolean userHasAnyOrder(int userId){
+		List<Order> orders =  jdbcTemplate.query("SELECT * FROM orders WHERE userid = ?", new OrderRowMapper(), userId);
+		return !orders.isEmpty();
+	}
 
     public void cancelOrder(int id) {
     	jdbcTemplate.update("UPDATE orders SET status = 'CANCELLED' where id = ?", id);

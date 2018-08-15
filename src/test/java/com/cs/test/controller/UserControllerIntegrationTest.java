@@ -102,7 +102,7 @@ public class UserControllerIntegrationTest {
     }
 
     @Test
-    public void canDeleteTraderById() {
+    public void canDeleteTraderByIdWithoutPosition() {
         Map<String,String> userInfo = new HashMap<>();
         userInfo.put("firstName", "someTraderToBeDeleted");
         userInfo.put("lastName", "someLastName");
@@ -123,7 +123,7 @@ public class UserControllerIntegrationTest {
                 .contentType("application/json")
                 .body(userInfo)
                 .when().get("/users").then().
-                contentType(ContentType.JSON).extract().response();
+                        contentType(ContentType.JSON).extract().response();
 
         List<HashMap<String, Object>> mapList = response.jsonPath().getList("$");
 
@@ -143,5 +143,24 @@ public class UserControllerIntegrationTest {
                 then().
                 statusCode(SC_OK).body("find {it.firstName == 'someTraderToBeDeleted'}.lastName",equalTo(null),
                 "find {it.firstName == 'someTraderToBeDeleted'}.email",equalTo(null));
+    }
+
+    @Test
+    public void cannotDeleteTraderById() {
+
+        //bad request when delete jon doe
+
+        given()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when().delete("/user/" + 1).then()
+                .statusCode(SC_BAD_REQUEST).body("message", equalTo("This trader has orders in any status"));
+
+        //check trader data still exist
+
+        given().
+                accept(MediaType.APPLICATION_JSON_VALUE).when().get("/user/" + 1).
+                then().
+                statusCode(SC_OK).body("lastName",equalTo("Doe"),
+                "email",equalTo("jondoe@gmail.com"));
     }
 }

@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class OrderRepoIntegrationTest {
     	User user = new User(1,"Jon","Doe", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	assertThat(orderRepository.findOrderById(1), samePropertyValuesAs(new Order(1,company,"B","LIMIT",10.0,5,formatter.parseDateTime("2018-08-16 10:17:23"),user,"OPENED")));
     }
-//
+    
 //    //TODO
 //    @Test
 //    public void listOrdersGroupByOrderSideOrderTypeOrderStatus() {
@@ -154,19 +153,54 @@ public class OrderRepoIntegrationTest {
     	criteriaMap.put("toTimestamp", "2018-08-16 11:50:00");
     	assertThat(orderRepository.filterAndSortOrdersByCriteria(criteriaMap,"tickerSymbol,price","").size(), is(1));
     }
-    /*
-    @Test
-    public void allOrdersReturned() {
-    	Response response =
-    		when()
-    			.get("/orders?side=B").
-    		then()
-    			.statusCode(200).
-    		and()
-    			.extract().response();
-    	Order[] jsonResponse = response.as(Order[].class);
-    	assertThat(jsonResponse.length, is(4));
-    }*/
     
-
+    @Test
+    public void cancelExistingOrder() {
+    	orderRepository.cancelOrder(1);
+    	Order order = orderRepository.findOrderById(1);
+    	assertThat(order.getStatus(), is("CANCELLED"));
+    }
+    
+    @Test
+    public void updateExistingOrderNumberOfShares() {
+    	HashMap<String,Object> updateMap = new HashMap<String,Object>();
+    	updateMap.put("noOfShares", new Integer(1000));
+    	orderRepository.updateOrder(1, updateMap);;
+    	Order order = orderRepository.findOrderById(1);
+    	assertThat(order.getNoOfShares(), is(1000));
+    }
+    
+    @Test
+    public void updateExistingOrderNumberOfSharesAndPrice() {
+    	HashMap<String,Object> updateMap = new HashMap<String,Object>();
+    	updateMap.put("noOfShares", new Integer(800));
+    	updateMap.put("price", new Double(20));
+    	orderRepository.updateOrder(1, updateMap);;
+    	Order order = orderRepository.findOrderById(1);
+    	assertThat(order.getNoOfShares(), is(800));
+    	assertThat(order.getPrice(), is(20.0));
+    }
+    
+    @Test
+    public void updateExistingOrderNumberOfSharesPriceAndType() {
+    	HashMap<String,Object> updateMap = new HashMap<String,Object>();
+    	updateMap.put("noOfShares", new Integer(300));
+    	updateMap.put("price", new Double(60));
+    	updateMap.put("orderType", "LIMIT");
+    	orderRepository.updateOrder(1, updateMap);;
+    	Order order = orderRepository.findOrderById(1);
+    	assertThat(order.getNoOfShares(), is(300));
+    	assertThat(order.getPrice(), is(60.0));
+    	assertThat(order.getType(), is("LIMIT"));
+    }
+    
+    @Test
+    public void updateExistingOrderWithoutParameters() {
+    	HashMap<String,Object> updateMap = null;
+    	orderRepository.updateOrder(1, updateMap);;
+    	Order order = orderRepository.findOrderById(1);
+    	assertThat(order.getNoOfShares(), is(5));
+    	assertThat(order.getPrice(), is(10.0));
+    	assertThat(order.getType(), is("LIMIT"));
+    }
 }
