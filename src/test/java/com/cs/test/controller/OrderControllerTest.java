@@ -11,6 +11,7 @@ import static org.hamcrest.core.Is.is;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cs.requst.OrderRequest;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
@@ -59,16 +60,12 @@ public class OrderControllerTest {
 	//Story 1 Tests
 	@Test
 	public void insertBuyMarketOrder() {
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("IT Services","Services");
-    	Company company = new Company("HIJ.HK","CS", industry);
-    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
-    	Order order = new Order(company,"B","MARKET",0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+		OrderRequest orderRequest = new OrderRequest("HIJ.HK","B","MARKET",0d,678,2);
     	
     	Response response =
     	given()
     		.contentType("application/json")
-    		.body(order)
+    		.body(orderRequest)
     	.when()
     		.post("/order")
     	.then()
@@ -82,16 +79,12 @@ public class OrderControllerTest {
     }
 	@Test
 	public void insertInvalidBuyMarketOrder() {
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("IT Services","Services");
-    	Company company = new Company("HIJ.HK","CS", industry);
-    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
-    	Order order = new Order(company,"B","MARKET",-1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
-		
+		OrderRequest orderRequest = new OrderRequest("HIJ.HK","B","MARKET",-1000.0,678,2);
+
     	Response response =
 	    	given()
 	    		.contentType("application/json")
-	    		.body(order)
+	    		.body(orderRequest)
 	    	.when()
 	    		.post("/order")
 	    	.then()
@@ -104,16 +97,12 @@ public class OrderControllerTest {
 	
 	@Test
 	public void insertInvalidSellLimitOrder() {
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("IT Services","Services");
-    	Company company = new Company("WRONG.SYMBOL","CS", industry);
-    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
-    	Order order = new Order(company,"S","LIMIT",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
-		
-    	Response response =
+		OrderRequest orderRequest = new OrderRequest("Wrong Symbol.HK","S","LIMIT",1000.0,678,2);
+
+		Response response =
 	    	given()
 	    		.contentType("application/json")
-	    		.body(order)
+	    		.body(orderRequest)
 	    	.when()
 	    		.post("/order")
 	    	.then()
@@ -126,16 +115,12 @@ public class OrderControllerTest {
 	
 	@Test
 	public void insertInvalidSellMarketOrder() {
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("IT Services","Services");
-    	Company company = new Company("HIJ.HK","CS", industry);
-    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
-    	Order order = new Order(company,"S","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
-    	
+		OrderRequest orderRequest = new OrderRequest("HIJ.HK","S","MARKET",1000.0,678,2);
+
     	Response response =
     	    	given()
     	    		.contentType("application/json")
-    	    		.body(order)
+    	    		.body(orderRequest)
     	    	.when()
     	    		.post("/order")
     	    	.then()

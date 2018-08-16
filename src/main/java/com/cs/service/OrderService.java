@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.cs.dao.CompanyRepository;
+import com.cs.requst.OrderRequest;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,9 @@ public class OrderService {
 	
 	@Autowired
 	UserRepository userRepo;
+
+	@Autowired
+	CompanyRepository companyRepository;
 	
 	public List<Order> findAllOrders(){
         return orderRepo.findAllOrders();
@@ -78,8 +84,15 @@ public class OrderService {
 		}
 		return a;
     }
-	
-	
-	
 
+
+	public Order createOrderFromRequest(OrderRequest orderRequest) {
+		return new Order(companyRepository.findCompanyByTickerSymbol(orderRequest.tickerSymbol),
+				orderRequest.side,
+				orderRequest.type,
+				orderRequest.price,
+				orderRequest.noOfShares,
+				LocalDateTime.now().toDateTime(),
+				userRepo.findUserById(orderRequest.traderId));
+	}
 }

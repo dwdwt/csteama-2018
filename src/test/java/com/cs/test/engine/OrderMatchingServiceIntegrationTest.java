@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +41,7 @@ public class OrderMatchingServiceIntegrationTest {
 
     Company DB = mock(Company.class);
     Company MS = mock(Company.class);
+    Company BC = mock(Company.class);
     User someTrader;
     User someOtherTrader;
     Order buyOrder;
@@ -52,6 +54,7 @@ public class OrderMatchingServiceIntegrationTest {
         someOtherTrader = userService.getUserById(2);
         when(DB.getTickerSymbol()).thenReturn("DB.HK");
         when(MS.getTickerSymbol()).thenReturn("MS.HK");
+        when(BC.getTickerSymbol()).thenReturn("BC.HK");
         buyOrder = orderService.insertOrder(new Order(DB,"B","LIMIT",50,12,LocalDateTime.now().toDateTime(),someTrader));
     }
 
@@ -71,11 +74,8 @@ public class OrderMatchingServiceIntegrationTest {
         assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someTrader.getId()),"DB.HK",null,null,null).get(0).operation);
         assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someOtherTrader.getId()),"DB.HK",null,null,null).get(0).operation);
 
-        //TODO: bad code
-        Quote lastQuote = quoteService.findAllQuotes().get(quoteService.findAllQuotes().size()-1);
-        assertEquals(buyOrder.getOrderId(),lastQuote.getBuyOrder().getOrderId());
-        assertEquals(sellOrder.getOrderId(),lastQuote.getSellOrder().getOrderId());
-        assertEquals(lastQuote.getNoOfShares(),12);
+        assertTrue(quoteService.findAllQuotes().stream().anyMatch(o -> (o.getBuyOrder().getOrderId() == buyOrder.getOrderId() && o.getSellOrder().getOrderId() == sellOrder.getOrderId() && o.getNoOfShares() == 12)));
+
 
     }
 
@@ -199,6 +199,22 @@ public class OrderMatchingServiceIntegrationTest {
         // fill that unfilled orders for now: the unfilled order is affecting other tests
         Order dummyOrder = orderService.insertOrder(new Order(MS,"S","LIMIT",1,10,LocalDateTime.now().toDateTime(),someOtherTrader));
         orderMatchingService.matchOrderWithAny(dummyOrder);
+    }
+
+    @Test
+    //TODO: failling
+    public void canMatchMarketOrderToSellOrder() throws InterruptedException {
+        Order sellOrderAtBC = orderService.insertOrder(new Order(BC,"S","MARKET",50,12,LocalDateTime.now().toDateTime(),someOtherTrader));
+        Order buyOrderAtBC = orderService.insertOrder(new Order(BC,"B","LIMIT",0,6,LocalDateTime.now().toDateTime(),someTrader));
+
+        orderMatchingService.matchOrderWithAny(buyOrderAtBC);
+        Thread.sleep(1000);
+        Order updatedSellOrder = orderService.findOrderById(sellOrderAtBC.getOrderId());
+        Order updateBuyOrder = orderService.findOrderById(buyOrderAtBC.getOrderId());
+        assertEquals(0,updatedSellOrder.getNoOfShares());
+        assertEquals("FILLED",updatedSellOrder.getStatus());
+        assertEquals(0,updateBuyOrder.getNoOfShares());
+        assertEquals("FILLED",updateBuyOrder.getStatus());
     }
 
 

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cs.requst.OrderRequest;
+import com.cs.service.OrderMatchingService;
 import com.cs.view.TraderOrderView;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -32,6 +34,9 @@ public class OrderController {
 
     @Autowired
     OrderService orderSvc;
+
+    @Autowired
+    OrderMatchingService orderMatchingService;
 
     @Autowired
     CompanyService companySvc;
@@ -248,20 +253,22 @@ public class OrderController {
 
     @RequestMapping(value="/order", method = RequestMethod.POST,
 			produces=MediaType.APPLICATION_JSON_VALUE,consumes=MediaType.APPLICATION_JSON_VALUE)
-	public Order insertOrder(@RequestBody Order order){
-	try {
+	public Order insertOrder(@RequestBody OrderRequest orderRequest){
+        Order order;
+        try {
+            order = orderSvc.createOrderFromRequest(orderRequest);
 		if(order.getNoOfShares() <= 0 || order.getPrice() < 0) {
 			throw new InvalidOrderException("Quantiy of price and shares must be positive.");
 		} else if (order.getType().equals("MARKET") && order.getPrice() > 0) {
 			throw new InvalidOrderException("Unable to specify price when order type is market.");
 		}
-		Company company = companySvc.findCompanyByTickerSymbol(order.getCompany().getTickerSymbol());
-		
 	}catch(EmptyResultDataAccessException e) {
 		throw new InvalidOrderException("Invalid company");
 	}
 		order.setStatus("OPENED");
-		return orderSvc.insertOrder(order);
+		Order insertedOrder = orderSvc.insertOrder(order);
+        orderMatchingService.matchOrderWithAny(insertedOrder);
+        return insertedOrder;
 	}
 	
 	

@@ -33,7 +33,7 @@ public class OrderRepository {
 
     @Transactional
     public List<Order> findAllOrders(){
-        return jdbcTemplate.query("SELECT * FROM orders", new OrderRowMapper());
+        return jdbcTemplate.query("SELECT * FROM orders order by 1", new OrderRowMapper());
     }
 
     @Transactional
