@@ -43,11 +43,32 @@ insert into orders values (17,6,'HIJ.HK','S','LIMIT',10.0,555,'FILLED','2018-08-
 insert into orders values (18,6,'HIJ.HK','B','LIMIT',10.0,21,'FILLED','2018-08-16 13:57:23');
 insert into orders values (19,2,'HIJ.HK','S','LIMIT',10.0,555,'FILLED','2018-08-16 14:47:23');
 insert into orders values (20,6,'HIJ.HK','B','LIMIT',10.0,21,'FILLED','2018-08-16 13:57:23');
-insert into orders values (8,3,'HIJ.HK','B','LIMIT',10.0,21,'CANCELLED','2018-08-16 10:57:23');
 
-insert into quotes values (2,3,10,'2018-08-16 10:21:23');
-insert into quotes values (3,4,20,'2018-08-16 10:17:23');
-insert into quotes values (4,5,5,'2018-08-16 10:17:28');
-insert into quotes values (6,7,10,'2018-08-16 10:27:23');
-insert into quotes values (7,8,15,'2018-08-16 10:37:23');
-insert into quotes values (1,2,10,'2018-08-16 10:47:23');
+insert into orders values (21,3,'HIJ.HK','B','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+insert into orders values (22,4,'HIJ.HK','S','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+
+insert into orders values (23,3,'HIJ.HK','B','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+insert into orders values (24,4,'HIJ.HK','S','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+
+insert into orders values (25,5,'HIJ.HK','B','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+insert into orders values (26,6,'HIJ.HK','S','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+
+insert into orders values (27,7,'HIJ.HK','B','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+insert into orders values (28,8,'HIJ.HK','S','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+
+insert into orders values (29,5,'HIJ.HK','B','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+insert into orders values (30,6,'HIJ.HK','S','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+
+
+insert into orders values (31,3,'HIJ.HK','B','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+insert into orders values (32,4,'HIJ.HK','S','LIMIT',10.0, 0,'FILLED','2018-08-16 10:57:23');
+
+
+insert into quotes values (21,22,10,'2018-08-16 10:57:23');
+insert into quotes values (23,24,20,'2018-08-16 10:17:23');
+insert into quotes values (25,26,30,'2018-08-16 10:17:28');
+insert into quotes values (27,28,40,'2018-08-16 10:27:23');
+insert into quotes values (29,30,50,'2018-08-16 10:37:23');
+insert into quotes values (31,32,60,'2018-08-16 10:47:23');
+
+

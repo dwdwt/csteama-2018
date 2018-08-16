@@ -55,20 +55,15 @@ public class QuoteService {
 		}
 		
 		//listallvolumea.entrySet()
-		Map<User, Double> result = listAllVolumes.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-		
-
-
-		
-
-		
+		List<User> result = listAllVolumes.entrySet().stream()
+		        .sorted(Comparator.comparing(Map.Entry::getValue))
+		        .map(Map.Entry::getKey)
+		        .limit(5)
+		        .collect(Collectors.toList());
 		
 		
 
-		return new ArrayList<User>(result.keySet());
+		return result;
 
 	}
 	

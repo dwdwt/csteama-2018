@@ -67,7 +67,7 @@ public class QuoteRepository {
 		
 	}
 	
-	
+	//not use for now
     public  HashMap<Integer,Integer> topfiveQuotesFrombuy(){
     	String query = "SELECT sum(noOfShares) as 'quant', buyOrderId FROM quotes GROUP BY buyOrderId ORDER BY sum(noOfShares) DESC LIMIT 5";
     	//List<Map<int, int>> top5buy = jdbcTemplate.queryForMap(query, Integer.class);
@@ -82,7 +82,7 @@ public class QuoteRepository {
     	});
 	    return results;
     }
-    
+	//not use for now
     public HashMap<Integer,Integer> topfiveQuotesFromSell(){
     	String query = "SELECT sum(noOfShares) as 'quant', sellOrderId FROM quotes GROUP BY sellOrderId ORDER BY sum(noOfShares) DESC LIMIT 5";
     	//List<Integer> top5sell = jdbcTemplate.queryForList(query, Integer.class);
