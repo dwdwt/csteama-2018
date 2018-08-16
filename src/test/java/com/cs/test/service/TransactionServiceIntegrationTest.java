@@ -31,12 +31,10 @@ public class TransactionServiceIntegrationTest {
 
     @Test
     public void canAddTransaction(){
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        DateTime someDateTime = formatter.parseDateTime("2008-11-11 13:23:44");
         Order someOrder = mock(Order.class);
         when(someOrder.getOrderId()).thenReturn(100);
 
-        transactionService.addTxnRecord(someOrder,Operation.OPEN,10.1,2,someDateTime);
+        transactionService.addTxnRecord(someOrder,Operation.OPEN,10.1,2);
 
         List<Integer> orderIdList = new ArrayList<Integer>();
         transactionService.getAllTransactions().forEach(it -> orderIdList.add(it.getOrderId()));

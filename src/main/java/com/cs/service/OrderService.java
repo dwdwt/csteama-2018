@@ -33,6 +33,10 @@ public class OrderService {
 	public List<Order> filterAndSortOrdersByCriteria(Map<String, String> criteriaMap, String sortParams, String sortSequence){
 		return orderRepo.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
 	}
+
+	public List<Order> getAllOppositeOrder(Order order){
+		return orderRepo.getAllOppositeOrders(order);
+	}
 	
 	public void cancelOrder(int id) {
 		orderRepo.cancelOrder(id);
@@ -40,6 +44,10 @@ public class OrderService {
 	
 	public void updateOrder(int id, Map<String, Object> updateMap) {
 		orderRepo.updateOrder(id, updateMap);
+	}
+
+	public Order updateOrder(Order order) {
+		return orderRepo.updateOrder(order);
 	}
 	
 	public Order insertOrder(Order order) {

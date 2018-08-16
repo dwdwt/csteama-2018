@@ -32,12 +32,13 @@ public class TransactionRepository {
 
 
     public void insertTxn(Transaction txn) {
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String sql = MessageFormat.format("INSERT INTO transactions(orderId,operation,price,quantity,txnTimeStamp) values ({0},{1},{2},{3},{4})",
                 txn.getOrderId(),
                 "'" + txn.getOperation() + "'",
                 txn.getPrice(),
                 txn.getQuantity(),
-                "'" + txn.getTxnTimeStamp() + "'");
+                "'" +  dtfOut.print(txn.getTxnTimeStamp()) + "'");
         update(sql);
     }
 
