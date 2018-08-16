@@ -3,7 +3,10 @@ package com.cs.test.controller;
 import static io.restassured.RestAssured.given;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +26,7 @@ import com.cs.domain.User;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 @RunWith(SpringRunner.class)
@@ -181,8 +185,50 @@ public class UserControllerIntegrationTest {
         "[0].role", equalTo("TRADER"),
         "[0].address", equalTo("smu"),
         "[1].id", equalTo(6),
-        "[2].id", equalTo(5));
+        "[2].id", equalTo(5),
+        "[3].id", equalTo(3),
+        "[4].id", equalTo(2));
+       
+
     	
     }
     //4,6,5,3,2
+    
+    @Test
+    public void Top5TradersByNumSize() {
+    	  RestAssured.get("/trader/top5").then().assertThat()
+          .body("size()", is(5));
+    }
+    
+
+    
+    @Test
+    public void cangetTop5TradersByVol() {
+        given().
+        accept(MediaType.APPLICATION_JSON_VALUE).when().get("/trader/top5volume").
+        then().
+        statusCode(SC_OK).body(
+        "[0].id", equalTo(4),
+        "[0].firstName", equalTo("aa"),
+        "[0].lastName", equalTo("Na"),
+        "[0].contact", equalTo("123"),
+        "[0].email", equalTo("jondoe1@gmail.com"),
+        "[0].role", equalTo("TRADER"),
+        "[0].address", equalTo("smu"),
+        "[1].id", equalTo(6),
+        "[2].id", equalTo(7),
+        "[3].id", equalTo(8),
+        "[4].id", equalTo(5));
+    	
+    }
+    
+    //4,6,7,8,5
+    
+    
+    @Test
+    public void Top5TradersByVolSize() {
+    	  RestAssured.get("/trader/top5volume").then().assertThat()
+          .body("size()", is(5));
+    }
+    
 }
