@@ -16,6 +16,8 @@ import com.cs.dao.UserRepository;
 import com.cs.domain.Role;
 import com.cs.domain.User;
 
+import java.util.stream.Collectors;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Csteama2018Application.class})
 public class UserRepoIntegrationTest {
@@ -38,9 +40,12 @@ public class UserRepoIntegrationTest {
 
     @Test (expected = EmptyResultDataAccessException.class)
     public void canDeleteUser() {
-        assert userRepository.findUserById(3) != null;
-        userRepository.deleteUserById(3);
-        userRepository.findUserById(3);
+        User user = new User("someName","someLastName","12345667","jondoe1@gmail.com",Role.TRADER,"smu");
+        userRepository.insertUser(user);
+        User userFromRepo = userRepository.findAllUsers().stream().filter(o-> o.getFirstName().equals(user.getFirstName()) && o.getLastName().equals(user.getLastName())).collect(Collectors.toList()).get(0);
+        assert userRepository.findUserById(userFromRepo.getId()) != null;
+        userRepository.deleteUserById(userFromRepo.getId());
+        userRepository.findUserById(userFromRepo.getId());
     }
     
     
