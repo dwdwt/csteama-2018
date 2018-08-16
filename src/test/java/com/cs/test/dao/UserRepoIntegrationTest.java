@@ -2,6 +2,7 @@ package com.cs.test.dao;
 
 import static com.cs.domain.Operation.OPEN;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 
@@ -30,12 +31,12 @@ public class UserRepoIntegrationTest {
 
     @Test
     public void canFindAllUsers() {
-        assertThat(userRepository.findAllUsers().size(), is(3));
+        assertThat(userRepository.findAllUsers().size(), not(0));
     }
 
     @Test
     public void canAddUserAndIDWillBeAutoIncrement() {
-        User user = new User(4,"peter","parker","12345678","pp@gmail.com",Role.TRADER,"someWhere");
+        User user = new User(4,"aa","Na","123","jondoe1@gmail.com",Role.TRADER,"smu");
         userRepository.insertUser(user);
         assertThat(userRepository.findUserById(4), samePropertyValuesAs(user));
     }
