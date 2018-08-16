@@ -204,7 +204,7 @@ public class OrderControllerTest {
 	// Story 3 Tests
 	@Test
 	public void updateExistingOrderWithoutParameters() {
-		Response response = when().get("/update/1").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/1").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("No update parameters found."));
 	}
@@ -219,9 +219,14 @@ public class OrderControllerTest {
 				extract().response();
 		
 		JsonPath jsonPath = new JsonPath(response.body().asString());
-		assertThat(jsonPath.get("find {it.orderId==1}.noOfShares"), is(30));
-		assertThat(jsonPath.get("find {it.orderId==1}.price"), is((float)50.0));
-		assertThat(jsonPath.get("find {it.orderId==1}.type"), is("MARKET"));
+		try {
+			assertThat(jsonPath.get("find {it.orderId==1}.noOfShares"), is(30));
+			assertThat(jsonPath.get("find {it.orderId==1}.price"), is((float)50.0));
+			assertThat(jsonPath.get("find {it.orderId==1}.type"), is("MARKET"));
+		} finally {
+			// Data roll-back
+			when().get("/order/update/1?quantity=5&price=10.0&orderType=LIMIT");
+		}
 	}
 
 	@Test
@@ -257,14 +262,14 @@ public class OrderControllerTest {
 	public void listAllOrders() {
 		Response response = when().get("/orders").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("orderId");
-		assertThat(jsonResponse.size(), is(8));
+		assertThat(jsonResponse.size(), is(32));
 	}
 	
 	@Test
 	public void listOrdersBasedOnSide() {
 		Response response = when().get("/orders?side=B").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("orderId");
-		assertThat(jsonResponse.size(), is(4));
+		assertThat(jsonResponse.size(), is(16));
 	}
 	
 	@Test
@@ -278,7 +283,6 @@ public class OrderControllerTest {
 	public void listOrdersBasedOnOrderType() {
 		Response response = when().get("/orders?orderType=MARKET").then().statusCode(200).and().extract().response();
 		List<Integer> jsonResponse = response.jsonPath().getList("orderId");
-		//1 was updated in the method updateExistingOrderWithInvalidOrderTypeParameter() above
 		assertThat(jsonResponse.size(), is(3));
 	}
 	
@@ -307,7 +311,7 @@ public class OrderControllerTest {
 	public void listOrdersBasedOnSymbol() {
 		Response response = when().get("/orders?tickerSymbol=HIJ.HK").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("orderId");
-		assertThat(jsonResponse.size(), is(6));
+		assertThat(jsonResponse.size(), is(30));
 	}  
 	
 	@Test
@@ -321,8 +325,7 @@ public class OrderControllerTest {
 	public void listOrdersBasedOnFromAndToQuantity() {
 		Response response = when().get("/orders?fromOrderQty=0&toOrderQty=10").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("orderId");
-		//1 was updated in the method updateExistingOrderWithValidParameters() above
-		assertThat(jsonResponse.size(), is(1));
+		assertThat(jsonResponse.size(), is(14));
 	}  
 	
 	@Test
@@ -406,7 +409,6 @@ public class OrderControllerTest {
 	public void listOrdersBasedOnMultipleFilterParameters() {
 		Response response = when().get("/orders?side=B&orderType=MARKET").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("orderId");
-		//1 was updated in the method updateExistingOrderWithValidParameters() above
 		assertThat(jsonResponse.size(), is(2));
 	}
 	
@@ -415,14 +417,9 @@ public class OrderControllerTest {
 		Response response = when().get("/orders?sort=tickerSymbol&sortSeq=asc").then().statusCode(200).and().extract().response();
 		List<Integer> jsonResponse = response.jsonPath().getList("orderId");
 		List<Integer> answer = new ArrayList<>();
-		answer.add(1);
-		answer.add(2);
-		answer.add(3);
-		answer.add(4);
-		answer.add(5);
-		answer.add(6);
-		answer.add(7);
-		answer.add(8);
+		for(int i = 1; i<=32; i++) {
+			answer.add(i);
+		}
 		
 		assertThat(jsonResponse, is(answer));
 	}
@@ -432,12 +429,9 @@ public class OrderControllerTest {
 		Response response = when().get("/orders?sort=tickerSymbol&sortSeq=desc").then().statusCode(200).and().extract().response();
 		List<Integer> jsonResponse = response.jsonPath().getList("orderId");
 		List<Integer> answer = new ArrayList<>();
-		answer.add(3);
-		answer.add(4);
-		answer.add(5);
-		answer.add(6);
-		answer.add(7);
-		answer.add(8);
+		for(int i = 3; i<=32; i++) {
+			answer.add(i);
+		}
 		answer.add(2);
 		answer.add(1);
 		
@@ -449,31 +443,21 @@ public class OrderControllerTest {
 		Response response = when().get("/orders?sort=price&sortSeq=asc").then().statusCode(200).and().extract().response();
 		List<Integer> jsonResponse = response.jsonPath().getList("orderId");
 		List<Integer> answer = new ArrayList<>();
-		answer.add(1);
-		answer.add(2);
-		answer.add(3);
-		answer.add(4);
-		answer.add(5);
-		answer.add(6);
-		answer.add(7);
-		answer.add(8);
+		for(int i = 1; i<=32; i++) {
+			answer.add(i);
+		}
 		
 		assertThat(jsonResponse, is(answer));
 	}
 	
 	@Test
-	public void listOrdersSortedByPriceDesscending() {
+	public void listOrdersSortedByPriceDescending() {
 		Response response = when().get("/orders?sort=price&sortSeq=desc").then().statusCode(200).and().extract().response();
 		List<Integer> jsonResponse = response.jsonPath().getList("orderId");
 		List<Integer> answer = new ArrayList<>();
-		answer.add(1);
-		answer.add(2);
-		answer.add(3);
-		answer.add(4);
-		answer.add(5);
-		answer.add(6);
-		answer.add(7);
-		answer.add(8);
+		for(int i = 1; i<=32; i++) {
+			answer.add(i);
+		}
 		
 		assertThat(jsonResponse, is(answer));
 	}
@@ -513,8 +497,8 @@ public class OrderControllerTest {
 				then().
 				statusCode(SC_OK).body("lastOrderTimeStamp", equalTo("2018-08-16 10:57:23"),
 				"opened", equalTo(1),
-				"fulfilled", equalTo(2),
-				"cancelled", equalTo(2));
+				"fulfilled", equalTo(4),
+				"cancelled", equalTo(1));
 	}
 	
 }

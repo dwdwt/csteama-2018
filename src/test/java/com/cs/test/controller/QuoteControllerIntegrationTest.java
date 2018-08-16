@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -36,7 +37,7 @@ public class QuoteControllerIntegrationTest {
 	public void listQuotesBasedOnSymbol() {
 		Response response = when().get("/quotes?tickerSymbol=HIJ.HK").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("orderId");
-		assertThat(jsonResponse.size(), is(4));
+		assertThat(jsonResponse.size(), is(6));
 	}  
 	
 	@Test
@@ -93,9 +94,8 @@ public class QuoteControllerIntegrationTest {
 		Response response = when().get("/quotes?tickerSymbol=HIJ.HK&sortSeq=desc&fromTimestamp=2018-08-16 10:17:20&toTimestamp=2018-08-16 10:17:30").then().statusCode(200).and().extract().response();
 		List<Integer> jsonResponse = response.jsonPath().getList("buyOrder.orderId");
 		List<Integer> answer = new ArrayList<>();
-		answer.add(4);
-		answer.add(3);
-		
+		answer.add(25);
+		answer.add(23);
 		assertThat(jsonResponse, is(answer));
 	}
 	
@@ -103,12 +103,7 @@ public class QuoteControllerIntegrationTest {
 	public void listOrdersSortedByTickerSymbolDescending() {
 		Response response = when().get("/quotes?tickerSymbol=HIJ.HK&sortSeq=desc").then().statusCode(200).and().extract().response();
 		List<Integer> jsonResponse = response.jsonPath().getList("buyOrder.orderId");
-		List<Integer> answer = new ArrayList<>();
-		answer.add(7);
-		answer.add(6);
-		answer.add(4);
-		answer.add(3);
-		
+		List<Integer> answer = new ArrayList<>(Arrays.asList(new Integer[] {21,31,29,27,25,23}));
 		assertThat(jsonResponse, is(answer));
 	}
 	
