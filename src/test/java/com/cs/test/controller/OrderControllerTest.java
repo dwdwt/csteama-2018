@@ -122,7 +122,7 @@ public class OrderControllerTest {
 	public void cancelOpenOrder() {
     	Response response =
 		when().
-    		get("/cancel/{orderId}",1).
+    		get("/order/cancel/{orderId}",1).
     	then().
     		statusCode(200).
     	and().extract().response();
@@ -136,7 +136,7 @@ public class OrderControllerTest {
 	public void cancelFilledOrder() {
     	try {
     		when().
-    			get("/cancel/{orderId}",2).
+    			get("/order/cancel/{orderId}",2).
 			then().
     			statusCode(400);
     	}catch(InvalidActionException e) {
@@ -148,7 +148,7 @@ public class OrderControllerTest {
 	public void cancelInvalidOrder() {
 		try {
 			when().
-				get("/cancel/{orderId}",100).
+				get("/order/cancel/{orderId}",100).
 			then().
 				statusCode(400);
 		}catch(InvalidParameterException e) {
@@ -161,7 +161,7 @@ public class OrderControllerTest {
 	public void cancelCancelledOrder() {
 		try {
 			when().
-				get("/cancel/{orderId}",3).
+				get("/order/cancel/{orderId}",3).
 			then().
 				statusCode(400);
 		}catch(InvalidActionException e) {
@@ -181,7 +181,7 @@ public class OrderControllerTest {
 	@Test
 	public void updateExistingOrderWithValidParameters() {
 		Response response = when().
-				get("/update/1?quantity=30&price=50.0&orderType=MARKET").
+				get("/order/update/1?quantity=30&price=50.0&orderType=MARKET").
 				then().
 					statusCode(200).
 				and().
@@ -195,28 +195,28 @@ public class OrderControllerTest {
 
 	@Test
 	public void updateNonExistingOrderWithParameters() {
-		Response response = when().get("/update/900?quantity=30").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/900?quantity=30").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Invalid order id."));
 	}
 
 	@Test
 	public void updateExistingOrderWithInvalidQuantityParameter() {
-		Response response = when().get("/update/1?quantity=thirty").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/1?quantity=thirty").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Number of shares has to be an integer value."));
 	}
 
 	@Test
 	public void updateExistingOrderWithInvalidPriceParameter() {
-		Response response = when().get("/update/1?price=fifty").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/1?price=fifty").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Price has to be a double value."));
 	}
 
 	@Test
 	public void updateExistingOrderWithInvalidOrderTypeParameter() {
-		Response response = when().get("/update/1?orderType=Market").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/1?orderType=Market").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Order type has to be either MARKET or LIMIT."));
 	}
