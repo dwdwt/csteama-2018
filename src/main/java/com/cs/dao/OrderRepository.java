@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
@@ -114,7 +115,7 @@ public class OrderRepository {
     		jdbcTemplate.update(query, id);
     	}
     }
-
+    @Transactional
     public Order insertOrder(Order order) {
     	String query = "INSERT into ORDERS (userid,tickersymbol,side,ordertype,price,noofshares,status,ordertimestamp) values("
     			+ order.getTrader().getId()+ ",'"
@@ -122,7 +123,6 @@ public class OrderRepository {
     			+ order.getSide() + "','" + order.getType() + "',"
     			+ order.getPrice() + "," + order.getNoOfShares() + ",'"
     			+ order.getStatus() + "','" + order.getTimeStamp() +"')";
-    	System.out.println("****!!!!" + order.getTrader().getId());
     	jdbcTemplate.execute(query);
     	List<Order> orderList = findAllOrders();
     	Order insertedOrder = orderList.get(orderList.size()-1);
@@ -174,5 +174,11 @@ public class OrderRepository {
     	//return null;
     	
     }
+    
+    //for rollback after insert - junit
+  	public void deleteOrder(int orderId) {
+  		String query ="DELETE FROM orders WHERE id = " + orderId;
+  		jdbcTemplate.update(query);
+  	}
     
 }

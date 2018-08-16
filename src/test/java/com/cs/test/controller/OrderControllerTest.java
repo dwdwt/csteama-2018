@@ -25,6 +25,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -78,12 +79,13 @@ public class OrderControllerTest {
 
 	//Story 1 Tests
 	@Test
+	@Rollback(true)
 	public void insertBuyMarketOrder() {
-		List<Order> orderList = orderRepo.findAllOrders();
+		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("Commodities Trading","Commodities Services");
+		Industry industry = new Industry("IT Services","Services");
     	Company company = new Company("HIJ.HK","CS", industry);
-    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	Order order = new Order(company,"B","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
     	
     	Response response =
@@ -97,9 +99,9 @@ public class OrderControllerTest {
     	.and()	
     		.extract().response();
     	JsonPath jsonPath = new JsonPath(response.body().asString());
-    	
-    	assertThat(jsonPath.get("orderId"),is(orderList.size()+1));
-    	
+    	List<Order> orderList = orderRepo.findAllOrders();
+    	assertThat(jsonPath.get("orderId"),is(orderList.size()));
+    	orderRepo.deleteOrder(orderList.size());
     }
 	@Test
 	public void insertInvalidBuyMarketOrder() {

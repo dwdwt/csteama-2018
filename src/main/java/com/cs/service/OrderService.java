@@ -8,6 +8,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cs.dao.OrderRepository;
 import com.cs.dao.UserRepository;
@@ -42,7 +43,7 @@ public class OrderService {
 	public void updateOrder(int id, Map<String, Object> updateMap) {
 		orderRepo.updateOrder(id, updateMap);;
 	}
-
+	
 	public Order insertOrder(Order order) {
 		return orderRepo.insertOrder(order);
 	}
