@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cs.domain.Company;
 import com.cs.domain.Order;
 import com.cs.exception.InvalidActionException;
+import com.cs.exception.InvalidOrderException;
 import com.cs.exception.InvalidParameterException;
 import com.cs.service.CompanyService;
 import com.cs.service.OrderService;
 
 @RestController
 public class OrderController {
+
 
     @Autowired
     OrderService orderSvc;
@@ -189,8 +191,8 @@ public class OrderController {
                 orderSvc.getTotalOrdersBystatus(uid, "CANCELLED")
         );
 
-
     }
+    
 
 
     @RequestMapping("/order/update/{orderId}")
@@ -244,22 +246,27 @@ public class OrderController {
         return orderSvc.findAllOrders();
     }
 
-    @RequestMapping(value = "/order", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Order insertOrder(@RequestBody Order order) {
-        try {
-            String query = "INSERT into ORDERS values("
-                    + order.getOrderId() + "," + order.getTrader().getId() + ",'"
-                    + order.getCompany().getTickerSymbol() + "','"
-                    + order.getSide() + "','" + order.getType() + "',"
-                    + order.getNoOfShares() + "," + order.getPrice() + ",'"
-                    + order.getStatus() + "'," + order.getTimeStamp() + ")";
-            System.out.println(query);
+    @RequestMapping(value="/order", method = RequestMethod.POST,
+			produces=MediaType.APPLICATION_JSON_VALUE,consumes=MediaType.APPLICATION_JSON_VALUE)
+	public Order insertOrder(@RequestBody Order order){
+	try {
+		if(order.getNoOfShares() <= 0 || order.getPrice() < 0) {
+			throw new InvalidOrderException("Quantiy of price and shares must be positive.");
+		} else if (order.getType().equals("MARKET") && order.getPrice() > 0) {
+			throw new InvalidOrderException("Unable to specify price when order type is market.");
+		}
+		Company company = companySvc.findCompanyByTickerSymbol(order.getCompany().getTickerSymbol());
+		
+	}catch(EmptyResultDataAccessException e) {
+		throw new InvalidOrderException("Invalid company");
+	}
+		order.setStatus("OPENED");
+		return orderSvc.insertOrder(order);
+	}
+	
+	
+	
+	
+	
 
-        } catch (InvalidActionException e) {
-
-        }
-        return orderSvc.insertOrder(order);
-    }
-    
 }

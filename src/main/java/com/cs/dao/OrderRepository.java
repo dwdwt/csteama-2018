@@ -3,6 +3,7 @@ package com.cs.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
+import com.cs.domain.User;
 
 
 @Repository
@@ -112,17 +115,18 @@ public class OrderRepository {
     		jdbcTemplate.update(query, id);
     	}
     }
-
+    @Transactional
     public Order insertOrder(Order order) {
-    	String query = "INSERT into ORDERS values("
-    			+ order.getOrderId() +"," + order.getTrader().getId()+ ",'"
+    	String query = "INSERT into ORDERS (userid,tickersymbol,side,ordertype,price,noofshares,status,ordertimestamp) values("
+    			+ order.getTrader().getId()+ ",'"
     			+ order.getCompany().getTickerSymbol() + "','"
     			+ order.getSide() + "','" + order.getType() + "',"
-    			+ order.getNoOfShares() + "," + order.getPrice() + ",'"
+    			+ order.getPrice() + "," + order.getNoOfShares() + ",'"
     			+ order.getStatus() + "','" + order.getTimeStamp() +"')";
-    	
     	jdbcTemplate.execute(query);
-    	return order;
+    	List<Order> orderList = findAllOrders();
+    	Order insertedOrder = orderList.get(orderList.size()-1);
+    	return insertedOrder;
     }
     class OrderRowMapper implements RowMapper<Order> {
         @Override
@@ -159,5 +163,22 @@ public class OrderRepository {
     	query += " userId = " + userId + " And status = '" + status + "'";
     	return jdbcTemplate.queryForObject(query, Integer.class);
     }
+    
+    
+    //top 5 traders by number of tardes
+    public List<Integer> getTopfiveByNumberofTrades(){
+    	String query = "SELECT userId FROM orders WHERE status = 'FILLED' GROUP BY userId ORDER BY COUNT(id) DESC LIMIT 5 ";
+    	List<Integer> top5 = jdbcTemplate.queryForList(query, Integer.class);
+    	return top5;
+    
+    	//return null;
+    	
+    }
+    
+    //for rollback after insert - junit
+  	public void deleteOrder(int orderId) {
+  		String query ="DELETE FROM orders WHERE id = " + orderId;
+  		jdbcTemplate.update(query);
+  	}
     
 }

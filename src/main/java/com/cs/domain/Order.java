@@ -99,10 +99,10 @@ public class Order {
         this.status = status;
     }
     
-    public Order(int orderId, Company company, String side, String type, double price, int noOfShares,
+    public Order(Company company, String side, String type, double price, int noOfShares,
             DateTime timeStamp, User trader) {
 	   super();
-	   this.orderId = orderId;
+	   
 	   this.company = company;
 	   this.side = side;
 	   this.type = type;
