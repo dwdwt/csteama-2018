@@ -1,13 +1,11 @@
 package com.cs.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,38 +35,32 @@ public class QuoteService {
 	
 	public List<User> findtop5byVolume(){
 
-		List<User> a = new ArrayList();
-		
-
-		
 		List<Quote> lista = quoteRepo.findAllQuotes();
-		HashMap<User, Double> listallvolumea = new HashMap<>();
+		HashMap<User, Double> listAllVolumes = new HashMap<>();
 		
 		
 		for (Quote qt: lista) {
-			if(listallvolumea.containsKey(qt.getBuyOrder().getTrader())) {
+			if(listAllVolumes.containsKey(qt.getBuyOrder().getTrader())) {
 				double addup = qt.getNoOfShares()*qt.getBuyOrder().getPrice();
-				listallvolumea.put(qt.getBuyOrder().getTrader(), addup);
+				listAllVolumes.put(qt.getBuyOrder().getTrader(), addup);
 			}
-			else if(listallvolumea.containsKey(qt.getSellOrder().getTrader())) {
+			else if(listAllVolumes.containsKey(qt.getSellOrder().getTrader())) {
 				double addup = qt.getNoOfShares()*qt.getSellOrder().getPrice();
-				listallvolumea.put(qt.getSellOrder().getTrader(), addup);
+				listAllVolumes.put(qt.getSellOrder().getTrader(), addup);
 			}
 			else {
-				listallvolumea.put(qt.getBuyOrder().getTrader(), qt.getNoOfShares()*qt.getBuyOrder().getPrice());
-				listallvolumea.put(qt.getSellOrder().getTrader(), qt.getNoOfShares()*qt.getSellOrder().getPrice());
+				listAllVolumes.put(qt.getBuyOrder().getTrader(), qt.getNoOfShares()*qt.getBuyOrder().getPrice());
+				listAllVolumes.put(qt.getSellOrder().getTrader(), qt.getNoOfShares()*qt.getSellOrder().getPrice());
 			}
 		}
 		
 		//listallvolumea.entrySet()
+		Map<User, Double> result = listAllVolumes.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 		
-		
-		
-		
-
-		
-		
-		
+		return new ArrayList<User>(result.keySet());
 	}
 	
 
