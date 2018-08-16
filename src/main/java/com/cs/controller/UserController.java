@@ -1,17 +1,19 @@
 package com.cs.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.cs.domain.Order;
 import com.cs.domain.User;
 import com.cs.service.OrderService;
+import com.cs.service.QuoteService;
 import com.cs.service.UserService;
-import com.cs.view.TraderOrderView;
-
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 public class UserController {
@@ -20,6 +22,9 @@ public class UserController {
 	
 	@Autowired
 	OrderService orderSvc;
+	
+	@Autowired
+	QuoteService quoteSvc;
 	
 	
 	@RequestMapping("/users")
@@ -48,12 +53,18 @@ public class UserController {
 		userSvc.removeUser(id);
 	}
 	
-    //top 5 traders by trade 
+    //top 5 traders by trade number
     @RequestMapping("/trader/top5")
     public List<User> findTopFiveTrader() {
         return orderSvc.getTop5tradersbyNumberofTrades();
     }
-
+    
+    
+    @RequestMapping("/trader/top5volume")
+    public List<User> findTopFiveTraderByVolum(){
+    	return quoteSvc.findtop5byVolume();
+    }
+    
 
 
 }

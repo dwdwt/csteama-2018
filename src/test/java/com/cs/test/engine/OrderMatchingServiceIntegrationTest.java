@@ -1,13 +1,11 @@
 package com.cs.test.engine;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import com.cs.Csteama2018Application;
-import com.cs.domain.Company;
-import com.cs.domain.Order;
-import com.cs.domain.Status;
-import com.cs.domain.User;
-import com.cs.service.OrderMatchingService;
-import com.cs.service.OrderService;
-import org.joda.time.DateTime;
+import com.cs.domain.*;
+import com.cs.service.*;
+import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+
+import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,64 +27,179 @@ public class OrderMatchingServiceIntegrationTest {
     OrderMatchingService orderMatchingService;
 
     @Autowired
+    TransactionService transactionService;
+
+    @Autowired
+    QuoteService quoteService;
+
+    @Autowired
     OrderService orderService;
 
-    public Order mockBuyOrder = mock(Order.class);
-    public Order mockSellOrder = mock(Order.class);
-    public Company mockCompany = mock(Company.class);
-    public User mockTrader = mock(User.class);
+    @Autowired
+    UserService userService;
+
+    Company DB = mock(Company.class);
+    Company MS = mock(Company.class);
+    User someTrader;
+    User someOtherTrader;
+    Order buyOrder;
+    Order sellOrder;
+
 
     @Before
     public void setUp(){
-        when(mockTrader.getId()).thenReturn(9999);
-        when(mockBuyOrder.getTrader()).thenReturn(mockTrader);
-        when(mockCompany.getTickerSymbol()).thenReturn("GOD.HK");
-
-        when(mockBuyOrder.getOrderId()).thenReturn(2000);
-
-        when(mockBuyOrder.getCompany()).thenReturn(mockCompany);
-        when(mockBuyOrder.getSide()).thenReturn("B");
-        when(mockBuyOrder.getType()).thenReturn("LIMIT");
-        when(mockBuyOrder.getNoOfShares()).thenReturn(12);
-        when(mockBuyOrder.getPrice()).thenReturn(50.0);
-        when(mockBuyOrder.getStatus()).thenReturn("OPENED");
-        when(mockBuyOrder.getTimeStamp()).thenReturn(new DateTime("2018-01-02"));
-
-        when(mockSellOrder.getOrderId()).thenReturn(2001);
-        when(mockSellOrder.getTrader()).thenReturn(mockTrader);
-
-        when(mockSellOrder.getCompany()).thenReturn(mockCompany);
-        when(mockSellOrder.getSide()).thenReturn("S");
-        when(mockSellOrder.getType()).thenReturn("LIMIT");
-        when(mockSellOrder.getNoOfShares()).thenReturn(12);
-        when(mockSellOrder.getPrice()).thenReturn(50.1);
-        when(mockSellOrder.getStatus()).thenReturn("OPENED");
-        when(mockSellOrder.getTimeStamp()).thenReturn(new DateTime("2018-01-02"));
+        someTrader = userService.getUserById(1);
+        someOtherTrader = userService.getUserById(2);
+        when(DB.getTickerSymbol()).thenReturn("DB.HK");
+        when(MS.getTickerSymbol()).thenReturn("MS.HK");
+        buyOrder = orderService.insertOrder(new Order(DB,"B","LIMIT",50,12,LocalDateTime.now().toDateTime(),someTrader));
     }
 
-
-
-    //TODO: not passing yet
     @Test
-    public void canMatchTwoOrders(){
-        orderService.insertOrder(mockBuyOrder);
-        orderService.insertOrder(mockSellOrder);
+    public void buyOrderCanMatchSellOrderWithSameQuantityAndOrderStatusWillBeUpdated() throws InterruptedException {
+        sellOrder = orderService.insertOrder(new Order(DB,"S","LIMIT",50,12,LocalDateTime.now().toDateTime(),someOtherTrader));
 
-        orderMatchingService.matchAll();
+        orderMatchingService.matchOrderWithAny(buyOrder);
+        Thread.sleep(1000);
+        Order updatedBuyOrder = orderService.findOrderById(buyOrder.getOrderId());
+        Order updatedSellOrder = orderService.findOrderById(sellOrder.getOrderId());
+        assertEquals(0,updatedBuyOrder.getNoOfShares());
+        assertEquals("FILLED",updatedBuyOrder.getStatus());
+        assertEquals(0,updatedSellOrder.getNoOfShares());
+        assertEquals("FILLED",updatedSellOrder.getStatus());
 
-        Order buyOrder =  orderService.findOrderById(2000);
-        Order sellOrder =  orderService.findOrderById(2001);
+        assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someTrader.getId()),"DB.HK",null,null,null).get(0).operation);
+        assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someOtherTrader.getId()),"DB.HK",null,null,null).get(0).operation);
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertThat(buyOrder.getStatus(), is(Status.FUFILLED.toString()));
-        assertThat(buyOrder.getNoOfShares(),is(0));
-        assertThat(sellOrder.getStatus(),is(Status.FUFILLED.toString()));
-        assertThat(sellOrder.getNoOfShares(),is(0));
+        //TODO: bad code
+        Quote lastQuote = quoteService.findAllQuotes().get(quoteService.findAllQuotes().size()-1);
+        assertEquals(buyOrder.getOrderId(),lastQuote.getBuyOrder().getOrderId());
+        assertEquals(sellOrder.getOrderId(),lastQuote.getSellOrder().getOrderId());
+        assertEquals(lastQuote.getNoOfShares(),12);
 
     }
+
+    @Test
+    public void buyOrderCanMatchTwoOrder() throws InterruptedException {
+        sellOrder = orderService.insertOrder(new Order(DB,"S","LIMIT",49,6,LocalDateTime.now().toDateTime(),someOtherTrader));
+        Order anotherSellOrder = orderService.insertOrder(new Order(DB,"S","LIMIT",49,1,LocalDateTime.now().toDateTime(),someOtherTrader));
+
+        orderMatchingService.matchOrderWithAny(buyOrder);
+        Thread.sleep(1000);
+
+        Order updatedBuyOrder = orderService.findOrderById(buyOrder.getOrderId());
+        Order updatedSellOrder = orderService.findOrderById(sellOrder.getOrderId());
+        Order updatedAnotherSellOrder = orderService.findOrderById(anotherSellOrder.getOrderId());
+
+        assertEquals(5,updatedBuyOrder.getNoOfShares());
+        assertEquals("OPENED",updatedBuyOrder.getStatus());
+        assertEquals(0,updatedSellOrder.getNoOfShares());
+        assertEquals("FILLED",updatedSellOrder.getStatus());
+        assertEquals(0,updatedAnotherSellOrder.getNoOfShares());
+        assertEquals("FILLED",updatedAnotherSellOrder.getStatus());
+
+    }
+
+    @Test
+    public void buyOrderCanMatchTwoOrderBasedOnBetterPrice() throws InterruptedException {
+        sellOrder = orderService.insertOrder(new Order(DB,"S","LIMIT",49,9,LocalDateTime.now().toDateTime(),someOtherTrader));
+        Order betterSellOrder = orderService.insertOrder(new Order(DB,"S","LIMIT",48,12,LocalDateTime.now().toDateTime(),someOtherTrader));
+        Order worstSellOrder = orderService.insertOrder(new Order(DB,"S","LIMIT",50,12,LocalDateTime.now().toDateTime(),someOtherTrader));
+
+        orderMatchingService.matchOrderWithAny(buyOrder);
+        Thread.sleep(1000);
+
+        Order updatedBuyOrder = orderService.findOrderById(buyOrder.getOrderId());
+        Order updatedSellOrder = orderService.findOrderById(sellOrder.getOrderId());
+        Order updatedBetterSellOrder = orderService.findOrderById(betterSellOrder.getOrderId());
+
+        assertEquals(0,updatedBuyOrder.getNoOfShares());
+        assertEquals("FILLED",updatedBuyOrder.getStatus());
+        assertEquals(9,updatedSellOrder.getNoOfShares());
+        assertEquals("OPENED",updatedSellOrder.getStatus());
+        assertEquals(0,updatedBetterSellOrder.getNoOfShares());
+        assertEquals("FILLED",updatedBetterSellOrder.getStatus());
+        assertEquals(new Double(48), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someTrader.getId()),"DB.HK",null,null,null).get(0).askPrice);
+
+        // fill that unfilled orders for now: the unfilled order is affecting other tests
+        Order dummyOrder = orderService.insertOrder(new Order(DB,"B","LIMIT",100,21,LocalDateTime.now().toDateTime(),someOtherTrader));
+        orderMatchingService.matchOrderWithAny(dummyOrder);
+    }
+
+    @Test
+    public void sellOrderCanMatchBuyOrderWithSameQuantityAndOrderStatusWillBeUpdated() throws InterruptedException {
+        Order buyOrderAtMS = orderService.insertOrder(new Order(MS,"B","LIMIT",50,12,LocalDateTime.now().toDateTime(),someTrader));
+        Order sellOrderAtMS = orderService.insertOrder(new Order(MS,"S","LIMIT",50,12,LocalDateTime.now().toDateTime(),someOtherTrader));
+        orderMatchingService.matchOrderWithAny(sellOrderAtMS);
+        Thread.sleep(1000);
+        Order updatedBuyOrder = orderService.findOrderById(buyOrderAtMS.getOrderId());
+        Order updatedSellOrder = orderService.findOrderById(sellOrderAtMS.getOrderId());
+        assertEquals(0,updatedBuyOrder.getNoOfShares());
+        assertEquals("FILLED",updatedBuyOrder.getStatus());
+        assertEquals(0,updatedSellOrder.getNoOfShares());
+        assertEquals("FILLED",updatedSellOrder.getStatus());
+
+        assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someTrader.getId()),"MS.HK",null,null,null).get(0).operation);
+        assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someOtherTrader.getId()),"MS.HK",null,null,null).get(0).operation);
+    }
+
+    @Test
+    public void sellOrderCanMatchTwoBuyOrder() throws InterruptedException {
+        Order sellOrderAtMS = orderService.insertOrder(new Order(MS,"S","LIMIT",50,12,LocalDateTime.now().toDateTime(),someOtherTrader));
+        Order buyOrderAtMS = orderService.insertOrder(new Order(MS,"B","LIMIT",51,6,LocalDateTime.now().toDateTime(),someTrader));
+        Order anotherBuyOrderAtMS = orderService.insertOrder(new Order(MS,"B","LIMIT",551,5,LocalDateTime.now().toDateTime(),someTrader));
+
+
+        orderMatchingService.matchOrderWithAny(sellOrderAtMS);
+        Thread.sleep(1000);
+
+        Order updatedSellOrder = orderService.findOrderById(sellOrderAtMS.getOrderId());
+        Order updatedBuyOrder = orderService.findOrderById(buyOrderAtMS.getOrderId());
+        Order updatedAnotherBuyOrder = orderService.findOrderById(anotherBuyOrderAtMS.getOrderId());
+
+        assertEquals(0,updatedBuyOrder.getNoOfShares());
+        assertEquals("FILLED",updatedBuyOrder.getStatus());
+        assertEquals(1,updatedSellOrder.getNoOfShares());
+        assertEquals("OPENED",updatedSellOrder.getStatus());
+        assertEquals(0,updatedAnotherBuyOrder.getNoOfShares());
+        assertEquals("FILLED",updatedAnotherBuyOrder.getStatus());
+
+        // fill that unfilled orders for now: the unfilled order is affecting other tests
+        Order dummyOrder = orderService.insertOrder(new Order(MS,"S","LIMIT",1,1,LocalDateTime.now().toDateTime(),someOtherTrader));
+        orderMatchingService.matchOrderWithAny(dummyOrder);
+
+    }
+
+    @Test
+    public void sellOrderCanMatchTwoBuyOrderBasedOnBetterPrice() throws InterruptedException {
+        Order sellOrderAtMS = orderService.insertOrder(new Order(MS,"S","LIMIT",50,12,LocalDateTime.now().toDateTime(),someOtherTrader));
+        Order buyOrderAtMS = orderService.insertOrder(new Order(MS,"B","LIMIT",52,6,LocalDateTime.now().toDateTime(),someTrader));
+
+        Order worseBuyOrderAtMS = orderService.insertOrder(new Order(MS,"B","LIMIT",49,6,LocalDateTime.now().toDateTime(),someTrader));
+        Order betterBuyOrderAtMS = orderService.insertOrder(new Order(MS,"B","LIMIT",500,10,LocalDateTime.now().toDateTime(),someTrader));
+
+
+        orderMatchingService.matchOrderWithAny(sellOrderAtMS);
+        Thread.sleep(1000);
+
+        Order updatedSellOrder = orderService.findOrderById(sellOrderAtMS.getOrderId());
+        Order updatedBuyOrder = orderService.findOrderById(buyOrderAtMS.getOrderId());
+        Order updatedBetterBuyOrder = orderService.findOrderById(betterBuyOrderAtMS.getOrderId());
+        Order updatedWorseBuyOrder = orderService.findOrderById(worseBuyOrderAtMS.getOrderId());
+
+        assertEquals(0,updatedSellOrder.getNoOfShares());
+        assertEquals("FILLED",updatedSellOrder.getStatus());
+        assertEquals(0,updatedBetterBuyOrder.getNoOfShares());
+        assertEquals("FILLED",updatedBetterBuyOrder.getStatus());
+        assertEquals(4,updatedBuyOrder.getNoOfShares());
+        assertEquals("OPENED",updatedBuyOrder.getStatus());
+        assertEquals(6,updatedWorseBuyOrder.getNoOfShares());
+        assertEquals("OPENED",updatedBuyOrder.getStatus());
+
+        // fill that unfilled orders for now: the unfilled order is affecting other tests
+        Order dummyOrder = orderService.insertOrder(new Order(MS,"S","LIMIT",1,10,LocalDateTime.now().toDateTime(),someOtherTrader));
+        orderMatchingService.matchOrderWithAny(dummyOrder);
+    }
+
 
 }

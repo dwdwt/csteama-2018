@@ -3,6 +3,7 @@ package com.cs.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,9 +16,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
-import com.cs.domain.User;
 
 
 @Repository
@@ -32,14 +31,21 @@ public class OrderRepository {
     @Autowired
     private CompanyRepository companyRepo;
 
+    @Transactional
     public List<Order> findAllOrders(){
         return jdbcTemplate.query("SELECT * FROM orders", new OrderRowMapper());
     }
 
+    @Transactional
     public Order findOrderById(int id) {
     	return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?", new OrderRowMapper(), id);
     }
     
+    public double findOrderPriceById(int id) {
+    	String query = "SELECT price FROM orders WHERE id = ?";
+    	return jdbcTemplate.queryForObject(query, new Object[] { id }, Double.class);
+    }
+
     public List<Order> filterAndSortOrdersByCriteria(Map<String, String> criteriaMap, String sortParams, String sortSequence){
 
 		String query = "SELECT * FROM orders";
@@ -85,6 +91,14 @@ public class OrderRepository {
     	
     }
 
+	public List<Order> getAllOppositeOrders(Order order){
+		return jdbcTemplate.query(
+				MessageFormat.format("SELECT * FROM orders WHERE tickerSymbol = {0} AND side <> {1} order by price",
+						"'" + order.getCompany().getTickerSymbol() + "'",
+						"'" + order.getSide() + "'")
+				, new OrderRowMapper());
+	}
+
     public boolean userHasAnyOrder(int userId){
 		List<Order> orders =  jdbcTemplate.query("SELECT * FROM orders WHERE userid = ?", new OrderRowMapper(), userId);
 		return !orders.isEmpty();
@@ -128,7 +142,24 @@ public class OrderRepository {
     	Order insertedOrder = orderList.get(orderList.size()-1);
     	return insertedOrder;
     }
-    class OrderRowMapper implements RowMapper<Order> {
+
+    @Transactional
+	public Order updateOrder(Order order) {
+		String query = MessageFormat.format("Update ORDERS set userid = {0}, tickersymbol = {1},side = {2},ordertype = {3},price = {4},noofshares = {5},status = {6}, ordertimestamp = {7} where id = {8}",
+				order.getTrader().getId(),
+				 "'" + order.getCompany().getTickerSymbol() + "'",
+				"'" + order.getSide() + "'" ,
+				"'" + order.getType()+"'",
+				 order.getPrice(),order.getNoOfShares(),
+				"'"+ order.getStatus() + "'",
+				"'" + order.getTimeStamp()+"'",
+				order.getOrderId());
+		jdbcTemplate.execute(query);
+		return findOrderById(order.getOrderId());
+
+	}
+
+	class OrderRowMapper implements RowMapper<Order> {
         @Override
         public Order mapRow(ResultSet rs, int rowNum) throws SQLException {
             Order order = new Order();
@@ -174,11 +205,13 @@ public class OrderRepository {
     	//return null;
     	
     }
-    
-    //for rollback after insert - junit
+
+    //for rollback after addQuote - junit
   	public void deleteOrder(int orderId) {
   		String query ="DELETE FROM orders WHERE id = " + orderId;
   		jdbcTemplate.update(query);
   	}
-    
+
+
+
 }

@@ -158,7 +158,7 @@ public class OrderController {
         return orderSvc.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
     }
 
-    @RequestMapping("/cancel/{orderId}")
+    @RequestMapping("/order/cancel/{orderId}")
     public List<Order> cancelOrder(@PathVariable("orderId") int orderId) {
         try {
             Order order = orderSvc.findOrderById(orderId);
@@ -195,7 +195,7 @@ public class OrderController {
     
 
 
-    @RequestMapping("/update/{orderId}")
+    @RequestMapping("/order/update/{orderId}")
     public List<Order> updateOrder(@PathVariable("orderId") int orderId,
                                    @RequestParam(value = "quantity", defaultValue = "") String noOfShares,
                                    @RequestParam(value = "price", defaultValue = "") String sharePrice,

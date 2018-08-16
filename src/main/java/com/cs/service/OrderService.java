@@ -1,14 +1,12 @@
 package com.cs.service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.cs.dao.OrderRepository;
 import com.cs.dao.UserRepository;
@@ -35,6 +33,10 @@ public class OrderService {
 	public List<Order> filterAndSortOrdersByCriteria(Map<String, String> criteriaMap, String sortParams, String sortSequence){
 		return orderRepo.filterAndSortOrdersByCriteria(criteriaMap, sortParams, sortSequence);
 	}
+
+	public List<Order> getAllOppositeOrder(Order order){
+		return orderRepo.getAllOppositeOrders(order);
+	}
 	
 	public void cancelOrder(int id) {
 		orderRepo.cancelOrder(id);
@@ -42,6 +44,10 @@ public class OrderService {
 	
 	public void updateOrder(int id, Map<String, Object> updateMap) {
 		orderRepo.updateOrder(id, updateMap);
+	}
+
+	public Order updateOrder(Order order) {
+		return orderRepo.updateOrder(order);
 	}
 	
 	public Order insertOrder(Order order) {
@@ -66,7 +72,7 @@ public class OrderService {
 	//get top 5 by number of trades
 	public List<User> getTop5tradersbyNumberofTrades(){
 		List<Integer> list =  orderRepo.getTopfiveByNumberofTrades();
-		List<User> a = new ArrayList();
+		List<User> a = new ArrayList<>();
 		for (Integer e: list) {
 			a.add(userRepo.findUserById(e));
 		}

@@ -1,16 +1,9 @@
 package com.cs.test.dao;
 
-import static com.cs.domain.Operation.OPEN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
-import static org.hamcrest.core.Is.is;
 
-import com.cs.domain.Role;
-import com.cs.domain.Transaction;
-import com.cs.domain.User;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.Csteama2018Application;
 import com.cs.dao.UserRepository;
+import com.cs.domain.Role;
+import com.cs.domain.User;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Csteama2018Application.class})

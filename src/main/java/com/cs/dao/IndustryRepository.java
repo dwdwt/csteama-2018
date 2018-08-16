@@ -18,11 +18,26 @@ public class IndustryRepository {
 	private JdbcTemplate jdbcTemplate;
 	
 	public List<Industry> findAllIndustries() {
-		return jdbcTemplate.query("SELECT * FROM sectors", new IndustryRowMapper());
+		return jdbcTemplate.query("SELECT * FROM industries", new IndustryRowMapper());
 	}
 	
 	public Industry findIndustryByName(String name) {
 		return jdbcTemplate.queryForObject("SELECT * FROM industries WHERE name = ?", new IndustryRowMapper(), name);
+	}
+	
+	public void updateIndustryInformation(Industry industry) {
+		String name = industry.getName();
+		String desc = industry.getDescription();
+		jdbcTemplate.update("UPDATE industries SET description = ? WHERE name = ?", desc, name);
+	}
+	
+	public void deleteIndustry(String industryName) {
+		jdbcTemplate.update("DELETE FROM industries WHERE name = ?", industryName);
+	}
+	
+	// For testing purposes
+	public void insertIndustry(String query) {
+		jdbcTemplate.update(query);
 	}
 	
 	class IndustryRowMapper implements RowMapper<Industry> {

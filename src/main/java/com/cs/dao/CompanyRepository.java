@@ -84,6 +84,11 @@ public class CompanyRepository {
 		jdbcTemplate.update(query);
 	}
 	
+	public List<Company> findCompaniesByIndustry(String industryName) {
+		return jdbcTemplate.query("SELECT * FROM companies WHERE industryName = ?", new CompanyRowMapper(), industryName);
+
+	}
+	
 	class CompanyRowMapper implements RowMapper<Company> {
 
 		@Override
