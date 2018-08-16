@@ -52,13 +52,19 @@ public class OrderMatchingService {
             int remainder = order.getNoOfShares() - tradedQuantity;
             if (remainder == 0) {
                 order.setNoOfShares(0);
+                order.setStatus("FILLED");
                 oppositeOrder.setNoOfShares(oppositeOrder.getNoOfShares()-tradedQuantity);
+
             }
             else {
-                order.setNoOfShares(order.getNoOfShares() - tradedQuantity);
+                order.setNoOfShares(remainder);
                 oppositeOrder.setNoOfShares(0);
+                oppositeOrder.setStatus("FILLED");
             }
 
+            //update
+            if (order.getNoOfShares() == 0) order.setStatus("FILLED");
+            if (oppositeOrder.getNoOfShares() == 0) oppositeOrder.setStatus("FILLED");
             transactionService.addTxnRecord(order,Operation.FILL,tradedPrice,tradedQuantity);
             transactionService.addTxnRecord(oppositeOrder,Operation.FILL,tradedPrice,tradedQuantity);
             orderService.updateOrder(order);

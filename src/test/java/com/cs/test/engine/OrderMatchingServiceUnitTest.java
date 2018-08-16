@@ -47,7 +47,6 @@ public class OrderMatchingServiceUnitTest {
         when(mockCompany.getTickerSymbol()).thenReturn("GOD.HK");
 
         when(mockBuyOrder.getOrderId()).thenReturn(2000);
-
         when(mockBuyOrder.getCompany()).thenReturn(mockCompany);
         when(mockBuyOrder.getSide()).thenReturn("B");
         when(mockBuyOrder.getType()).thenReturn("LIMIT");
@@ -58,7 +57,6 @@ public class OrderMatchingServiceUnitTest {
 
         when(mockSellOrder.getOrderId()).thenReturn(2001);
         when(mockSellOrder.getTrader()).thenReturn(mockTrader);
-
         when(mockSellOrder.getCompany()).thenReturn(mockCompany);
         when(mockSellOrder.getSide()).thenReturn("S");
         when(mockSellOrder.getType()).thenReturn("LIMIT");
@@ -74,26 +72,13 @@ public class OrderMatchingServiceUnitTest {
     public void canMatchTwoOrdersAndFillAndPriceWillBeUpdatedWithSamePrice(){
 
         when (orderService.getAllOppositeOrder(mockBuyOrder)).thenReturn(Arrays.asList(mockSellOrder));
+
         orderMatchingService.matchOrderWithAny(mockBuyOrder);
+
         verify(mockBuyOrder).setNoOfShares(0);
         verify(mockSellOrder).setNoOfShares(0);
         verify(transactionService).addTxnRecord(mockBuyOrder, Operation.FILL,mockBuyOrder.getPrice(),mockBuyOrder.getNoOfShares());
         verify(transactionService).addTxnRecord(mockSellOrder, Operation.FILL,mockSellOrder.getPrice(),mockSellOrder.getNoOfShares());
-        verify(orderService).updateOrder(mockBuyOrder);
-        verify(orderService).updateOrder(mockSellOrder);
-    }
-
-
-    @Test
-    public void canMatchTwoOrdersAndFillAndPriceWhenSellPriceIsLowerThanBuyPrice(){
-        when(mockSellOrder.getPrice()).thenReturn(49.0);
-
-        when (orderService.getAllOppositeOrder(mockBuyOrder)).thenReturn(Arrays.asList(mockSellOrder));
-        orderMatchingService.matchOrderWithAny(mockBuyOrder);
-        verify(mockBuyOrder).setNoOfShares(0);
-        verify(mockSellOrder).setNoOfShares(0);
-        verify(transactionService).addTxnRecord(mockBuyOrder, Operation.FILL,49.0,mockBuyOrder.getNoOfShares());
-        verify(transactionService).addTxnRecord(mockSellOrder, Operation.FILL,49.0,mockSellOrder.getNoOfShares());
         verify(orderService).updateOrder(mockBuyOrder);
         verify(orderService).updateOrder(mockSellOrder);
     }
