@@ -79,14 +79,12 @@ public class OrderControllerTest {
 
 	//Story 1 Tests
 	@Test
-	@Rollback(true)
 	public void insertBuyMarketOrder() {
-		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 		Industry industry = new Industry("IT Services","Services");
     	Company company = new Company("HIJ.HK","CS", industry);
     	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
-    	Order order = new Order(company,"B","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+    	Order order = new Order(company,"B","MARKET",0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
     	
     	Response response =
     	given()
@@ -106,9 +104,9 @@ public class OrderControllerTest {
 	@Test
 	public void insertInvalidBuyMarketOrder() {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("Commodities Trading","Commodities Services");
-    	Company company = new Company("XYZ.DE","CS", industry);
-    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
+		Industry industry = new Industry("IT Services","Services");
+    	Company company = new Company("HIJ.HK","CS", industry);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	Order order = new Order(company,"B","MARKET",-1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
 		
     	Response response =
@@ -128,9 +126,9 @@ public class OrderControllerTest {
 	@Test
 	public void insertInvalidSellLimitOrder() {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("Commodities Trading","Commodities Services");
-    	Company company = new Company("XYZ.DE","CS", industry);
-    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
+		Industry industry = new Industry("IT Services","Services");
+    	Company company = new Company("WRONG.SYMBOL","CS", industry);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	Order order = new Order(company,"S","LIMIT",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
 		
     	Response response =
@@ -147,7 +145,27 @@ public class OrderControllerTest {
 		assertThat(message, is("Invalid company"));
 	}
 	
-
+	@Test
+	public void insertInvalidSellMarketOrder() {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		Industry industry = new Industry("IT Services","Services");
+    	Company company = new Company("HIJ.HK","CS", industry);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
+    	Order order = new Order(company,"S","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+    	
+    	Response response =
+    	    	given()
+    	    		.contentType("application/json")
+    	    		.body(order)
+    	    	.when()
+    	    		.post("/order")
+    	    	.then()
+    	    		.statusCode(400)
+    	    	.and()	
+    	    		.extract().response();
+    		String message = response.jsonPath().getString("message");
+    		assertThat(message, is("Unable to specify price when order type is market."));
+	}
 
 	// Story 2 Tests
 

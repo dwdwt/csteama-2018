@@ -250,8 +250,10 @@ public class OrderController {
 			produces=MediaType.APPLICATION_JSON_VALUE,consumes=MediaType.APPLICATION_JSON_VALUE)
 	public Order insertOrder(@RequestBody Order order){
 	try {
-		if(order.getNoOfShares() <= 0 || order.getPrice() <=0) {
+		if(order.getNoOfShares() <= 0 || order.getPrice() < 0) {
 			throw new InvalidOrderException("Quantiy of price and shares must be positive.");
+		} else if (order.getType().equals("MARKET") && order.getPrice() > 0) {
+			throw new InvalidOrderException("Unable to specify price when order type is market.");
 		}
 		Company company = companySvc.findCompanyByTickerSymbol(order.getCompany().getTickerSymbol());
 		
