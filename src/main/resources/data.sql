@@ -16,6 +16,7 @@ insert into companies(name,tickerSymbol,industryName) values ('JP', 'DEF.HK', 'I
 insert into companies(name,tickerSymbol,industryName) values ('DBS', 'HIJ.HK', 'IT Services');
 insert into companies(name,tickerSymbol,industryName) values ('DB', 'DB.HK', 'IT Services');
 insert into companies(name,tickerSymbol,industryName) values ('MS', 'MS.HK', 'IT Services');
+insert into companies(name,tickerSymbol,industryName) values ('RBS', 'RBS.SG', 'IT Services');
 
 insert into transactions(orderId,operation,price,quantity,txnTimeStamp) values (1,'OPEN',10.0,5,'2008-11-11 13:23:44');
 insert into transactions(orderId,operation,price,quantity,txnTimeStamp) values (2,'FILL',10.1,6,'2010-11-11 13:23:44');

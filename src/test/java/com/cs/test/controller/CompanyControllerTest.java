@@ -19,6 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.Csteama2018Application;
 import com.cs.dao.CompanyRepository;
+import com.cs.dao.IndustryRepository;
+import com.cs.domain.Company;
+import com.cs.domain.Industry;
 import com.cs.domain.Order;
 
 import io.restassured.RestAssured;
@@ -37,6 +40,9 @@ public class CompanyControllerTest {
 
 	@Autowired
 	public CompanyRepository companyRepo;
+	
+	@Autowired
+	public IndustryRepository industryRepo;
 
 	@Before
 	public void init() {
@@ -48,7 +54,7 @@ public class CompanyControllerTest {
 	public void getAllCompanies() {
 		Response response = when().get("/companies").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("tickerSymbol");
-		assertThat(jsonResponse.size(), is(4));
+		assertThat(jsonResponse.size(), is(6));
 		JsonPath jsonPath = new JsonPath(response.body().asString());
 		assertThat(jsonPath.get("find {it.tickerSymbol=='ABC.HK'}.name"), is("CS"));
 		assertThat(jsonPath.get("find {it.tickerSymbol=='ABC.HK'}.industry.name"), is("IT Services"));
@@ -59,6 +65,18 @@ public class CompanyControllerTest {
 		assertThat(jsonPath.get("find {it.tickerSymbol=='HIJ.HK'}.name"), is("DBS"));
 		assertThat(jsonPath.get("find {it.tickerSymbol=='HIJ.HK'}.industry.name"), is("IT Services"));
 		assertThat(jsonPath.get("find {it.tickerSymbol=='HIJ.HK'}.industry.description"), is("Services"));
+	}
+	
+	@Test
+	public void updateCompanyWithInvalidMarketSector() {
+		Response response =
+				when().
+		    		get("/company/update?tickerSymbol=ABC.HK&newTickerSymbol=ABC.SG&name=CS Singapore&industryName=INVALID").
+		    	then().
+		    		statusCode(400).
+		    	and().extract().response();
+		String message = response.jsonPath().getString("message");
+		assertThat(message, is("Invalid industry/market sector."));
 	}
 	
 	@Test
@@ -158,4 +176,32 @@ public class CompanyControllerTest {
 		assertThat(jsonPath.get("find {it.tickerSymbol=='HIJ.HK'}.name"), is("DBS"));
 		assertThat(jsonPath.get("find {it.tickerSymbol=='HIJ.HK'}.industry.name"), is("IT Services"));
 	}
+	
+	@Test
+	public void deleteCompanyWithValidMarketSectorAndNoOrders() {
+		Response response =
+				when().
+		    		get("/company/delete/{tickerSymbol}","RBS.SG").
+		    	then().
+		    		statusCode(200).
+		    	and().extract().response();
+		
+		Industry industry = industryRepo.findIndustryByName("IT Services");
+		Company company = new Company("RBS.SG", "RBS", industry);
+		companyRepo.insertCompany(company);
+	}
+	
+	@Test
+	public void deleteCompanyWithValidMarketSectorWithOrders() {
+		Response response =
+				when().
+		    		get("/company/delete/{tickerSymbol}","ABC.HK").
+		    	then().
+		    		statusCode(400).
+		    	and().extract().response();
+		String message = response.jsonPath().getString("message");
+		assertThat(message, is("Cannot delete company as it has orders"));
+	}
+	
+	
 }

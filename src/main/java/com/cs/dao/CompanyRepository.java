@@ -89,6 +89,12 @@ public class CompanyRepository {
 
 	}
 	
+	public void insertCompany(Company company) {
+		String query = "INSERT INTO COMPANIES (name,tickersymbol,industryname) VALUES ('"+ 
+						company.getName()+ "', '" + company.getTickerSymbol() + "', '" + company.getIndustry().getName() +"')";
+		jdbcTemplate.execute(query);
+	}
+	
 	class CompanyRowMapper implements RowMapper<Company> {
 
 		@Override
