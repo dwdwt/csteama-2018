@@ -27,12 +27,19 @@ public class QuoteRepoIntegrationTest {
     //Story 9 Tests
     @Test
     public void listQuotesWithTickerSymbol() {
-    	assertThat(quoteRepo.filterAndSortQuotesByCriteria("HIJ.HK","","","asc").size(), is(4));
+    	assertThat(quoteRepo.filterAndSortQuotesByCriteria("HIJ.HK","","","asc").size(), is(6));
     }
     
     @Test
     public void listQuotesWithValidFromTimestampAndToTimestamp() {
-    	assertThat(quoteRepo.filterAndSortQuotesByCriteria("", "2018-08-16 10:17:20","2018-08-16 10:17:30","asc").size(), is(2));
+    	List<Integer> data = new ArrayList<>();
+    	List<Quote> raw = quoteRepo.filterAndSortQuotesByCriteria("", "2018-08-16 10:17:20","2018-08-16 10:17:30","asc");
+    	for(Quote quote: raw) {
+    		data.add(quote.getBuyOrder().getOrderId());
+    	}
+    	
+    	List<Integer> answer = new ArrayList<Integer>(Arrays.asList(new Integer[] {23,25}));
+    	assertThat(data, is(answer));
     }
     
     @Test
@@ -43,7 +50,7 @@ public class QuoteRepoIntegrationTest {
     		data.add(quote.getBuyOrder().getOrderId());
     	}
     	
-    	List<Integer> answer = new ArrayList<Integer>(Arrays.asList(new Integer[] {4,3}));
+    	List<Integer> answer = new ArrayList<Integer>(Arrays.asList(new Integer[] {25,23}));
     	assertThat(data, is(answer));
     }
  
