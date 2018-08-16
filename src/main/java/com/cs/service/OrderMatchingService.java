@@ -2,12 +2,12 @@ package com.cs.service;
 
 import com.cs.domain.Operation;
 import com.cs.domain.Order;
-import org.apache.tomcat.jni.Local;
+import com.cs.domain.Quote;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -15,6 +15,9 @@ public class OrderMatchingService {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    QuoteService quoteService;
 
     @Autowired
     TransactionService transactionService;
@@ -28,17 +31,14 @@ public class OrderMatchingService {
 
 
     public void matchOrderWithAny(Order order) {
-        Map<String, String> criteriaMap = new HashMap<>();
-        criteriaMap.put("stockSymbol", order.getCompany().getTickerSymbol());
         List<Order> allOppositeOrders = orderService.getAllOppositeOrder(order);
-
         if (allOppositeOrders.size() > 0){
             if (order.getSide().equals("B"))
                 Collections.sort(allOppositeOrders, Comparator.comparingDouble(Order::getPrice));
             else Collections.sort(allOppositeOrders, Comparator.comparingDouble(Order::getPrice).reversed());
 
             for (Order oppositeOrder: allOppositeOrders){
-                if(order.getNoOfShares() == 0) break;
+                if (order.getNoOfShares() == 0) break;
                 if (!tryMatchAndUpdate(order, oppositeOrder)) return;
             }
         }
@@ -54,7 +54,6 @@ public class OrderMatchingService {
                 order.setNoOfShares(0);
                 order.setStatus("FILLED");
                 oppositeOrder.setNoOfShares(oppositeOrder.getNoOfShares()-tradedQuantity);
-
             }
             else {
                 order.setNoOfShares(remainder);
@@ -65,8 +64,15 @@ public class OrderMatchingService {
             //update
             if (order.getNoOfShares() == 0) order.setStatus("FILLED");
             if (oppositeOrder.getNoOfShares() == 0) oppositeOrder.setStatus("FILLED");
-            transactionService.addTxnRecord(order,Operation.FILL,tradedPrice,tradedQuantity);
-            transactionService.addTxnRecord(oppositeOrder,Operation.FILL,tradedPrice,tradedQuantity);
+
+            DateTime now = LocalDateTime.now().toDateTime();
+
+
+            transactionService.addTxnRecord(order,Operation.FILL,tradedPrice,tradedQuantity, now);
+            transactionService.addTxnRecord(oppositeOrder,Operation.FILL,tradedPrice,tradedQuantity,now);
+
+            quoteService.addQuote(new Quote(isBuyOrder? order:oppositeOrder,isBuyOrder? oppositeOrder:order, tradedQuantity,now));
+
             orderService.updateOrder(order);
             orderService.updateOrder(oppositeOrder);
             return true;

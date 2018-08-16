@@ -4,10 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.cs.Csteama2018Application;
 import com.cs.domain.*;
-import com.cs.service.OrderMatchingService;
-import com.cs.service.OrderService;
-import com.cs.service.TransactionService;
-import com.cs.service.UserService;
+import com.cs.service.*;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +28,9 @@ public class OrderMatchingServiceIntegrationTest {
 
     @Autowired
     TransactionService transactionService;
+
+    @Autowired
+    QuoteService quoteService;
 
     @Autowired
     OrderService orderService;
@@ -70,6 +70,13 @@ public class OrderMatchingServiceIntegrationTest {
 
         assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someTrader.getId()),"DB.HK",null,null,null).get(0).operation);
         assertEquals(Operation.FILL.toString(), transactionService.getAllTransactionViewsByCriteria(String.valueOf(someOtherTrader.getId()),"DB.HK",null,null,null).get(0).operation);
+
+        //TODO: bad code
+        Quote lastQuote = quoteService.findAllQuotes().get(quoteService.findAllQuotes().size()-1);
+        assertEquals(buyOrder.getOrderId(),lastQuote.getBuyOrder().getOrderId());
+        assertEquals(sellOrder.getOrderId(),lastQuote.getSellOrder().getOrderId());
+        assertEquals(lastQuote.getNoOfShares(),12);
+
     }
 
     @Test

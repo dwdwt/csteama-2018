@@ -106,7 +106,7 @@ public class IndustryControllerIntegrationTest {
 	
 	@Test
 	public void deleteIndustryWithValidTickerSymbol() {
-		industryRepo.insertIndustry("insert into industries(name,description) values ('Testing Services', 'Services')");
+		industryRepo.insertIndustry("addQuote into industries(name,description) values ('Testing Services', 'Services')");
     	
 		Response response = 
 				when().

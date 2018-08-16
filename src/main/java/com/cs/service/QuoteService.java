@@ -27,6 +27,10 @@ public class QuoteService {
 	public List<Quote> findAllQuotes() {
 		return quoteRepo.findAllQuotes();
 	}
+
+	public void addQuote(Quote quote) {
+		quoteRepo.insertQuote(quote);
+	}
 	
 	public List<Quote> filterAndSortQuotesByCriteria(String tickerSymbol, String fromTimestamp, String toTimestamp, String sortSequence){
 		return quoteRepo.filterAndSortQuotesByCriteria(tickerSymbol, fromTimestamp, toTimestamp, sortSequence);

@@ -117,7 +117,7 @@ public class UserControllerIntegrationTest {
         userInfo.put("role", "TRADER");
         userInfo.put("address", "someAddress");
 
-        //insert trader data
+        //addQuote trader data
         given()
                 .contentType("application/json")
                 .body(userInfo)

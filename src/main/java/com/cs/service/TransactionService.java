@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,8 +39,8 @@ public class TransactionService {
 		transactionRepository.removeTxn(id);
 	}
 
-	public void addTxnRecord(Order order, Operation operation, double price, int quantity){
-		transactionRepository.insertTxn(new Transaction(order.getOrderId(),operation,price,quantity, LocalDateTime.now().toDateTime()));
+	public void addTxnRecord(Order order, Operation operation, double price, int quantity, DateTime dateTime){
+		transactionRepository.insertTxn(new Transaction(order.getOrderId(),operation,price,quantity, dateTime));
 		return;
 	}
 

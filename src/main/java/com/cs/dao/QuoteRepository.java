@@ -2,16 +2,21 @@ package com.cs.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 
+import com.cs.domain.Transaction;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.cs.domain.Quote;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class QuoteRepository {
@@ -21,6 +26,17 @@ public class QuoteRepository {
 	
 	@Autowired
 	private OrderRepository orderRepo;
+
+	@Transactional
+	public void insertQuote(Quote quote) {
+		DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		String sql = MessageFormat.format("INSERT INTO Quotes (buyOrderId, sellOrderId,noOfShares,quoteTimeStamp) values ({0},{1},{2},{3})",
+				quote.getBuyOrder().getOrderId(),
+				quote.getSellOrder().getOrderId(),
+				quote.getNoOfShares(),
+				"'" +  dtfOut.print(quote.getTimestamp()) + "'");
+		jdbcTemplate.update(sql);
+	}
 	
 	public List<Quote> findAllQuotes() {
 		return jdbcTemplate.query("SELECT * FROM quotes", new QuoteRowMapper());
