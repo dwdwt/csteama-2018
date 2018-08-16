@@ -1,14 +1,17 @@
 package com.cs.test.view;
 
-import com.cs.domain.*;
-import com.cs.exception.InvalidParameterException;
-import com.cs.view.TransactionView;
-import org.junit.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+
+import com.cs.domain.Company;
+import com.cs.domain.Operation;
+import com.cs.domain.Order;
+import com.cs.domain.Transaction;
+import com.cs.domain.User;
+import com.cs.exception.InvalidParameterException;
+import com.cs.view.TransactionView;
 
 public class TransactionViewUnitTest {
 

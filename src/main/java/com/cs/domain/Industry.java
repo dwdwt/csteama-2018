@@ -23,4 +23,9 @@ public class Industry {
 	public Industry() {
 		super();
 	}
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 }

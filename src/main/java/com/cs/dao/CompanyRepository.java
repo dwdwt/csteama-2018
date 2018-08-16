@@ -28,6 +28,10 @@ public class CompanyRepository {
 		return jdbcTemplate.queryForObject("SELECT * FROM companies WHERE tickerSymbol = ?", new CompanyRowMapper(), tickerSymbol);
 	}
 	
+	public List<Company> findCompaniesByIndustry(String industryName) {
+		return jdbcTemplate.query("SELECT * FROM companies WHERE industryName = ?", new CompanyRowMapper(), industryName);
+	}
+	
 	class CompanyRowMapper implements RowMapper<Company> {
 
 		@Override

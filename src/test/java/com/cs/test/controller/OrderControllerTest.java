@@ -1,10 +1,7 @@
 package com.cs.test.controller;
 
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,7 +11,8 @@ import static org.hamcrest.core.Is.is;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,11 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 
 import com.cs.Csteama2018Application;
 import com.cs.dao.CompanyRepository;
@@ -36,25 +31,10 @@ import com.cs.domain.Industry;
 import com.cs.domain.Order;
 import com.cs.domain.Role;
 import com.cs.domain.User;
-
 import com.cs.exception.InvalidActionException;
 import com.cs.exception.InvalidParameterException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.RestAssured;
-
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
-import java.util.List;
-
-import static io.restassured.RestAssured.when;
-
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
@@ -79,12 +59,11 @@ public class OrderControllerTest {
 	//Story 1 Tests
 	@Test
 	public void insertBuyMarketOrder() {
-		List<Order> orderList = orderRepo.findAllOrders();
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("Commodities Trading","Commodities Services");
+		Industry industry = new Industry("IT Services","Services");
     	Company company = new Company("HIJ.HK","CS", industry);
-    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
-    	Order order = new Order(company,"B","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
+    	Order order = new Order(company,"B","MARKET",0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
     	
     	Response response =
     	given()
@@ -97,16 +76,16 @@ public class OrderControllerTest {
     	.and()	
     		.extract().response();
     	JsonPath jsonPath = new JsonPath(response.body().asString());
-    	
-    	assertThat(jsonPath.get("orderId"),is(orderList.size()+1));
-    	
+    	List<Order> orderList = orderRepo.findAllOrders();
+    	assertThat(jsonPath.get("orderId"),is(orderList.size()));
+    	orderRepo.deleteOrder(orderList.size());
     }
 	@Test
 	public void insertInvalidBuyMarketOrder() {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("Commodities Trading","Commodities Services");
-    	Company company = new Company("XYZ.DE","CS", industry);
-    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
+		Industry industry = new Industry("IT Services","Services");
+    	Company company = new Company("HIJ.HK","CS", industry);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	Order order = new Order(company,"B","MARKET",-1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
 		
     	Response response =
@@ -126,9 +105,9 @@ public class OrderControllerTest {
 	@Test
 	public void insertInvalidSellLimitOrder() {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("Commodities Trading","Commodities Services");
-    	Company company = new Company("XYZ.DE","CS", industry);
-    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
+		Industry industry = new Industry("IT Services","Services");
+    	Company company = new Company("WRONG.SYMBOL","CS", industry);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
     	Order order = new Order(company,"S","LIMIT",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
 		
     	Response response =
@@ -145,7 +124,27 @@ public class OrderControllerTest {
 		assertThat(message, is("Invalid company"));
 	}
 	
-
+	@Test
+	public void insertInvalidSellMarketOrder() {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		Industry industry = new Industry("IT Services","Services");
+    	Company company = new Company("HIJ.HK","CS", industry);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
+    	Order order = new Order(company,"S","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+    	
+    	Response response =
+    	    	given()
+    	    		.contentType("application/json")
+    	    		.body(order)
+    	    	.when()
+    	    		.post("/order")
+    	    	.then()
+    	    		.statusCode(400)
+    	    	.and()	
+    	    		.extract().response();
+    		String message = response.jsonPath().getString("message");
+    		assertThat(message, is("Unable to specify price when order type is market."));
+	}
 
 	// Story 2 Tests
 
@@ -154,7 +153,7 @@ public class OrderControllerTest {
 	public void cancelOpenOrder() {
     	Response response =
 		when().
-    		get("/cancel/{orderId}",1).
+    		get("/order/cancel/{orderId}",1).
     	then().
     		statusCode(200).
     	and().extract().response();
@@ -168,7 +167,7 @@ public class OrderControllerTest {
 	public void cancelFilledOrder() {
     	try {
     		when().
-    			get("/cancel/{orderId}",2).
+    			get("/order/cancel/{orderId}",2).
 			then().
     			statusCode(400);
     	}catch(InvalidActionException e) {
@@ -180,7 +179,7 @@ public class OrderControllerTest {
 	public void cancelInvalidOrder() {
 		try {
 			when().
-				get("/cancel/{orderId}",100).
+				get("/order/cancel/{orderId}",100).
 			then().
 				statusCode(400);
 		}catch(InvalidParameterException e) {
@@ -193,7 +192,7 @@ public class OrderControllerTest {
 	public void cancelCancelledOrder() {
 		try {
 			when().
-				get("/cancel/{orderId}",3).
+				get("/order/cancel/{orderId}",3).
 			then().
 				statusCode(400);
 		}catch(InvalidActionException e) {
@@ -213,7 +212,7 @@ public class OrderControllerTest {
 	@Test
 	public void updateExistingOrderWithValidParameters() {
 		Response response = when().
-				get("/update/1?quantity=30&price=50.0&orderType=MARKET").
+				get("/order/update/1?quantity=30&price=50.0&orderType=MARKET").
 				then().
 					statusCode(200).
 				and().
@@ -227,28 +226,28 @@ public class OrderControllerTest {
 
 	@Test
 	public void updateNonExistingOrderWithParameters() {
-		Response response = when().get("/update/900?quantity=30").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/900?quantity=30").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Invalid order id."));
 	}
 
 	@Test
 	public void updateExistingOrderWithInvalidQuantityParameter() {
-		Response response = when().get("/update/1?quantity=thirty").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/1?quantity=thirty").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Number of shares has to be an integer value."));
 	}
 
 	@Test
 	public void updateExistingOrderWithInvalidPriceParameter() {
-		Response response = when().get("/update/1?price=fifty").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/1?price=fifty").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Price has to be a double value."));
 	}
 
 	@Test
 	public void updateExistingOrderWithInvalidOrderTypeParameter() {
-		Response response = when().get("/update/1?orderType=Market").then().statusCode(400).and().extract().response();
+		Response response = when().get("/order/update/1?orderType=Market").then().statusCode(400).and().extract().response();
 		String message = response.jsonPath().getString("message");
 		assertThat(message, is("Order type has to be either MARKET or LIMIT."));
 	}

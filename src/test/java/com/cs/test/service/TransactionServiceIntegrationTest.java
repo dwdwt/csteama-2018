@@ -1,8 +1,13 @@
 package com.cs.test.service;
 
-import com.cs.Csteama2018Application;
-import com.cs.domain.*;
-import com.cs.service.TransactionService;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -12,14 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import com.cs.Csteama2018Application;
+import com.cs.domain.Operation;
+import com.cs.domain.Order;
+import com.cs.service.TransactionService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Csteama2018Application.class})
