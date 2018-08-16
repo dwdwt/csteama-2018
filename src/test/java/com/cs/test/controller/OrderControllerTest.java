@@ -1,10 +1,7 @@
 package com.cs.test.controller;
 
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,7 +11,8 @@ import static org.hamcrest.core.Is.is;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 
 import com.cs.Csteama2018Application;
 import com.cs.dao.CompanyRepository;
@@ -37,25 +31,10 @@ import com.cs.domain.Industry;
 import com.cs.domain.Order;
 import com.cs.domain.Role;
 import com.cs.domain.User;
-
 import com.cs.exception.InvalidActionException;
 import com.cs.exception.InvalidParameterException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.RestAssured;
-
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
-import java.util.List;
-
-import static io.restassured.RestAssured.when;
-
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 

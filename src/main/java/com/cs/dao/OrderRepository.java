@@ -3,7 +3,6 @@ package com.cs.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cs.dao.UserRepository.UserRowMapper;
 import com.cs.domain.Order;
-import com.cs.domain.User;
 
 
 @Repository
