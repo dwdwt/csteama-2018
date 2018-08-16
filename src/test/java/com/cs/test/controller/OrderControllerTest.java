@@ -142,8 +142,6 @@ public class OrderControllerTest {
     	then().
     		statusCode(200).
     	and().extract().response();
-    	//List<String> jsonResponse = response.jsonPath().getList("status");
-    	//String cancelledOrder = jsonResponse.get(jsonResponse.size()-1);
     	Order cancelledOrder = orderRepo.findOrderById(1);
     	assertThat(cancelledOrder.getStatus(), is("CANCELLED"));
 	 }
