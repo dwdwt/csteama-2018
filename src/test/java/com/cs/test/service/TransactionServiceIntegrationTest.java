@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class TransactionServiceIntegrationTest {
         Order someOrder = mock(Order.class);
         when(someOrder.getOrderId()).thenReturn(100);
 
-        transactionService.addTxnRecord(someOrder,Operation.OPEN,10.1,2);
+        transactionService.addTxnRecord(someOrder,Operation.OPEN,10.1,2, LocalDateTime.now().toDateTime());
 
         List<Integer> orderIdList = new ArrayList<Integer>();
         transactionService.getAllTransactions().forEach(it -> orderIdList.add(it.getOrderId()));

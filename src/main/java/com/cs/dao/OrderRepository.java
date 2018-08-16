@@ -206,7 +206,7 @@ public class OrderRepository {
     	
     }
 
-    //for rollback after insert - junit
+    //for rollback after addQuote - junit
   	public void deleteOrder(int orderId) {
   		String query ="DELETE FROM orders WHERE id = " + orderId;
   		jdbcTemplate.update(query);

@@ -49,7 +49,7 @@ public class IndustryRepoIntegrationTest {
     
     @Test(expected = EmptyResultDataAccessException.class)
     public void deleteIndustry() {
-    	industryRepo.insertIndustry("insert into industries(name,description) values ('Testing Services', 'Services')");
+    	industryRepo.insertIndustry("addQuote into industries(name,description) values ('Testing Services', 'Services')");
     	industryRepo.deleteIndustry("Testing Services");
     	industryRepo.findIndustryByName("Testing Services");
     }
