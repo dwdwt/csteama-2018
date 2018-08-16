@@ -60,12 +60,10 @@ public class QuoteService {
 		
 		//listallvolumea.entrySet()
 		List<User> result = listAllVolumes.entrySet().stream()
-		        .sorted(Comparator.comparing(Map.Entry::getValue))
+		        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
 		        .map(Map.Entry::getKey)
 		        .limit(5)
 		        .collect(Collectors.toList());
-		
-		
 
 		return result;
 
