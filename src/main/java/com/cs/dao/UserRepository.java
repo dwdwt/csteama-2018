@@ -12,18 +12,21 @@ import org.springframework.stereotype.Repository;
 
 import com.cs.domain.Role;
 import com.cs.domain.User;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class UserRepository {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+
+	@Transactional
 	public List<User> findAllUsers() {
 		return jdbcTemplate.query("SELECT * FROM users", new UserRowMapper());
 	}
 	
-	
+
+	@Transactional
 	public User findUserById(int id) {
 		return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), id);
 	}

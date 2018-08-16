@@ -277,7 +277,7 @@ public class OrderRepoIntegrationTest {
 	public void canGetTotalNumberOfOrdersByStatus() {
 		assertThat(orderRepository.getOrderCountByStatus(3,"OPENED"), is(1));
 		assertThat(orderRepository.getOrderCountByStatus(3,"CANCELLED"), is(2));
-		assertThat(orderRepository.getOrderCountByStatus(2,"FILLED"), is(1));
+		assertThat(orderRepository.getOrderCountByStatus(2,"FILLED"), is(2));
 	}
 
 	@Test

@@ -31,10 +31,12 @@ public class OrderRepository {
     @Autowired
     private CompanyRepository companyRepo;
 
+    @Transactional
     public List<Order> findAllOrders(){
         return jdbcTemplate.query("SELECT * FROM orders", new OrderRowMapper());
     }
 
+    @Transactional
     public Order findOrderById(int id) {
     	return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?", new OrderRowMapper(), id);
     }
@@ -91,9 +93,9 @@ public class OrderRepository {
 
 	public List<Order> getAllOppositeOrders(Order order){
 		return jdbcTemplate.query(
-				MessageFormat.format("SELECT * FROM orders WHERE tickerSymbol = {0} AND side = {1} order by price",
-						order.getCompany().getTickerSymbol(),
-						order.getSide())
+				MessageFormat.format("SELECT * FROM orders WHERE tickerSymbol = {0} AND side <> {1} order by price",
+						"'" + order.getCompany().getTickerSymbol() + "'",
+						"'" + order.getSide() + "'")
 				, new OrderRowMapper());
 	}
 
@@ -149,7 +151,9 @@ public class OrderRepository {
 				"'" + order.getSide() + "'" ,
 				"'" + order.getType()+"'",
 				 order.getPrice(),order.getNoOfShares(),
-				"'"+ order.getStatus(),order.getTimeStamp()+"'");
+				"'"+ order.getStatus() + "'",
+				"'" + order.getTimeStamp()+"'",
+				order.getOrderId());
 		jdbcTemplate.execute(query);
 		return findOrderById(order.getOrderId());
 
