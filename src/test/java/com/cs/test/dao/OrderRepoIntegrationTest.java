@@ -282,8 +282,7 @@ public class OrderRepoIntegrationTest {
 
 	@Test
 	public void canGetTopfiveByNumberofTrades() {
-		//Integer[] result = new Integer[] {3,2,7,8,6};
-		List<Integer> list = Arrays.asList(4,6,5,2,3);
+		List<Integer> list = Arrays.asList(4,6,5,3,2);
 		assertEquals(orderRepository.getTopfiveByNumberofTrades(), list);
 	}
 
