@@ -212,10 +212,10 @@ public class OrderRepoIntegrationTest {
   	@Test
   	public void insertBuyMarketOrder() {
   		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		Industry industry = new Industry("Commodities Trading","Commodities Services");
+		Industry industry = new Industry("IT Services","Services");
     	Company company = new Company("HIJ.HK","CS", industry);
-    	User user = new User(10,"Jane","Dong", "4321","janedong@gmail.com", Role.TRADER,"smu");
-    	Order order = new Order(company,"B","MARKET",1000.0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
+    	User user = new User(2,"Brandon","Tan", "1234","jondoe@gmail.com", Role.TRADER,"smu");
+    	Order order = new Order(company,"B","MARKET",0,678,formatter.parseDateTime("2018-12-05 13:44:44"),user);
   		Order insertedOrder = orderRepository.insertOrder(order);
   		assertThat(insertedOrder,samePropertyValuesAs(order));
   	}
