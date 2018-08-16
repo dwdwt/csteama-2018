@@ -39,6 +39,11 @@ public class OrderRepository {
     	return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?", new OrderRowMapper(), id);
     }
     
+    public double findOrderPriceById(int id) {
+    	String query = "SELECT price FROM orders WHERE id = ?";
+    	return jdbcTemplate.queryForObject(query, new Object[] { id }, Double.class);
+    }
+    
     public List<Order> filterAndSortOrdersByCriteria(Map<String, String> criteriaMap, String sortParams, String sortSequence){
 
 		String query = "SELECT * FROM orders";
@@ -174,5 +179,8 @@ public class OrderRepository {
     	//return null;
     	
     }
+    
+  
+    
     
 }

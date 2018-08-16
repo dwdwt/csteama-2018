@@ -2,6 +2,7 @@ package com.cs.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -65,4 +66,37 @@ public class QuoteRepository {
 		}
 		
 	}
+	
+	
+    public  HashMap<Integer,Integer> topfiveQuotesFrombuy(){
+    	String query = "SELECT sum(noOfShares) as 'quant', buyOrderId FROM quotes GROUP BY buyOrderId ORDER BY sum(noOfShares) DESC LIMIT 5";
+    	//List<Map<int, int>> top5buy = jdbcTemplate.queryForMap(query, Integer.class);
+    	//return top5buy;
+    	
+    	HashMap<Integer,Integer> results = new HashMap<>();
+    	jdbcTemplate.query(query, (ResultSet rs) -> {
+    	 
+    	    while (rs.next()) {
+    	        results.put(rs.getInt("buyOrderId"), rs.getInt("quant"));
+    	    }
+    	});
+	    return results;
+    }
+    
+    public HashMap<Integer,Integer> topfiveQuotesFromSell(){
+    	String query = "SELECT sum(noOfShares) as 'quant', sellOrderId FROM quotes GROUP BY sellOrderId ORDER BY sum(noOfShares) DESC LIMIT 5";
+    	//List<Integer> top5sell = jdbcTemplate.queryForList(query, Integer.class);
+    	//return top5sell;
+    	
+    	HashMap<Integer,Integer> results = new HashMap<>();
+    	jdbcTemplate.query(query, (ResultSet rs) -> {
+    	 
+    	    while (rs.next()) {
+    	        results.put(rs.getInt("sellOrderId"), rs.getInt("quant"));
+    	    }
+    	});
+	    return results;
+    }
+    
+
 }

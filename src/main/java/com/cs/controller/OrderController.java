@@ -29,7 +29,7 @@ import com.cs.service.OrderService;
 @RestController
 public class OrderController {
 
-<<<<<<< HEAD
+
     @Autowired
     OrderService orderSvc;
 
@@ -263,8 +263,7 @@ public class OrderController {
         }
         return orderSvc.insertOrder(order);
     }
-=======
-	
+
 	@Autowired
 	OrderService orderSvc;
 	
@@ -484,5 +483,4 @@ public class OrderController {
 		order.setStatus("OPENED");
 		return orderSvc.insertOrder(order);
 	}
->>>>>>> 4bfbe4b1a979663dd9cdc3c33ccfdf28065fe240
 }
