@@ -196,7 +196,7 @@ public class OrderRepoIntegrationTest {
     	assertThat(order.getPrice(), is(60.0));
     	assertThat(order.getType(), is("LIMIT"));
     }
-    
+
 
     @Test
     public void updateExistingOrderWithoutParameters() {
@@ -207,7 +207,7 @@ public class OrderRepoIntegrationTest {
     	assertThat(order.getPrice(), is(10.0));
     	assertThat(order.getType(), is("LIMIT"));
     }
-    
+
   //Story 1 Tests
   	@Test
   	public void insertBuyMarketOrder() {
@@ -219,7 +219,7 @@ public class OrderRepoIntegrationTest {
   		Order insertedOrder = orderRepository.insertOrder(order);
   		assertThat(insertedOrder,samePropertyValuesAs(order));
   	}
-  	
+
   	@Test
   	public void insertInvalidBuyMarketOrder() {
   		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -230,8 +230,8 @@ public class OrderRepoIntegrationTest {
   		Order insertedOrder = orderRepository.insertOrder(order);
   		assertThat(insertedOrder,samePropertyValuesAs(order));
   	}
-  	
-  	
+
+
 
 //    @Test
 //
@@ -279,14 +279,14 @@ public class OrderRepoIntegrationTest {
 		assertThat(orderRepository.getOrderCountByStatus(3,"CANCELLED"), is(2));
 		assertThat(orderRepository.getOrderCountByStatus(2,"FILLED"), is(1));
 	}
-	
-	@Test 
+
+	@Test
 	public void canGetTopfiveByNumberofTrades() {
 		//Integer[] result = new Integer[] {3,2,7,8,6};
 		List<Integer> list = Arrays.asList(4,6,5,2,3);
 		assertEquals(orderRepository.getTopfiveByNumberofTrades(), list);
 	}
-	
-	
-	
+
+
+
 }
