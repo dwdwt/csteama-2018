@@ -8,6 +8,9 @@ import com.cs.domain.Transaction;
 import com.cs.view.TransactionView;
 import org.assertj.core.util.Strings;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +38,8 @@ public class TransactionService {
 		transactionRepository.removeTxn(id);
 	}
 
-	public void addTxnRecord(Order order, Operation operation, double price, int quantity, DateTime txnDateTime){
-		transactionRepository.insertTxn(new Transaction(order.getOrderId(),operation,price,quantity, txnDateTime));
+	public void addTxnRecord(Order order, Operation operation, double price, int quantity){
+		transactionRepository.insertTxn(new Transaction(order.getOrderId(),operation,price,quantity, LocalDateTime.now().toDateTime()));
 		return;
 	}
 
