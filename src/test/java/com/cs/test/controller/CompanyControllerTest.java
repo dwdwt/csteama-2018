@@ -54,7 +54,7 @@ public class CompanyControllerTest {
 	public void getAllCompanies() {
 		Response response = when().get("/companies").then().statusCode(200).and().extract().response();
 		List<String> jsonResponse = response.jsonPath().getList("tickerSymbol");
-		assertThat(jsonResponse.size(), is(6));
+		assertThat(jsonResponse.size(), is(7));
 		JsonPath jsonPath = new JsonPath(response.body().asString());
 		assertThat(jsonPath.get("find {it.tickerSymbol=='ABC.HK'}.name"), is("CS"));
 		assertThat(jsonPath.get("find {it.tickerSymbol=='ABC.HK'}.industry.name"), is("IT Services"));
