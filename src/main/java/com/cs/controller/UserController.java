@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cs.domain.User;
 import com.cs.service.OrderService;
+import com.cs.service.QuoteService;
 import com.cs.service.UserService;
 
 @RestController
@@ -21,6 +22,9 @@ public class UserController {
 	
 	@Autowired
 	OrderService orderSvc;
+	
+	@Autowired
+	QuoteService quoteSvc;
 	
 	
 	@RequestMapping("/users")
@@ -49,12 +53,18 @@ public class UserController {
 		userSvc.removeUser(id);
 	}
 	
-    //top 5 traders by trade 
+    //top 5 traders by trade number
     @RequestMapping("/trader/top5")
     public List<User> findTopFiveTrader() {
         return orderSvc.getTop5tradersbyNumberofTrades();
     }
-
+    
+    
+    @RequestMapping("/trader/top5volume")
+    public List<User> findTopFiveTraderByVolum(){
+    	return quoteSvc.findtop5byVolume();
+    }
+    
 
 
 }

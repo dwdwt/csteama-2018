@@ -1,5 +1,7 @@
 package com.cs.domain;
 
+import java.util.Objects;
+
 import org.assertj.core.util.VisibleForTesting;
 
 public class User {
@@ -86,5 +88,10 @@ public class User {
 		User another = (User) o;
 		return another.id == this.id;
 	}
+	
+	@Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 	
 }

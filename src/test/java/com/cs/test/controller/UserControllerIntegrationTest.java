@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.Csteama2018Application;
+import com.cs.domain.Role;
+import com.cs.domain.User;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -163,4 +165,24 @@ public class UserControllerIntegrationTest {
                 statusCode(SC_OK).body("lastName",equalTo("Doe"),
                 "email",equalTo("jondoe@gmail.com"));
     }
+    
+    
+    @Test
+    public void cangetTop5TradersByNum() {
+        given().
+        accept(MediaType.APPLICATION_JSON_VALUE).when().get("/trader/top5").
+        then().
+        statusCode(SC_OK).body(
+        "[0].id", equalTo(4),
+        "[0].firstName", equalTo("aa"),
+        "[0].lastName", equalTo("Na"),
+        "[0].contact", equalTo("123"),
+        "[0].email", equalTo("jondoe1@gmail.com"),
+        "[0].role", equalTo("TRADER"),
+        "[0].address", equalTo("smu"),
+        "[1].id", equalTo(6),
+        "[2].id", equalTo(5));
+    	
+    }
+    //4,6,5,3,2
 }
